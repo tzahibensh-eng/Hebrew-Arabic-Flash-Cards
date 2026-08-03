@@ -49,16 +49,28 @@ html[data-theme="dark"] {
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html, body { overflow-x: hidden; max-width: 100vw; }
+
 body {
   font-family: 'Heebo','Inter',system-ui,-apple-system,sans-serif;
+  font-size: 16px;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   min-height: 100dvh;
   display: flex; flex-direction: column; align-items: center;
-  padding: 0 16px calc(24px + env(safe-area-inset-bottom));
+  padding: env(safe-area-inset-top) calc(16px + env(safe-area-inset-right))
+           calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
   transition: background .3s var(--ease), color .3s var(--ease);
   -webkit-font-smoothing: antialiased;
+}
+
+button, .chip, .segmented button {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* ── progress ─────────────────────────────── */
@@ -82,7 +94,7 @@ header {
 .brand span { color: var(--muted); font-weight: 400; }
 
 .icon-btn {
-  width: 34px; height: 34px; border-radius: 10px;
+  width: 44px; height: 44px; border-radius: 12px;
   border: 1px solid var(--border); background: var(--surface);
   color: var(--text-2); cursor: pointer; font-size: .95rem;
   display: grid; place-items: center;
@@ -91,23 +103,46 @@ header {
 .icon-btn:hover  { border-color: var(--border-2); color: var(--text); }
 .icon-btn:active { transform: translateY(2px); }
 
-.auth-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  border: 1px solid var(--border); cursor: pointer; object-fit: cover;
+.google-btn {
+  display: flex; align-items: center; gap: 7px;
+  height: 44px; padding: 0 14px;
+  border-radius: 8px; border: 1px solid #dadce0; background: #fff;
+  color: #3c4043; font-family: 'Inter', 'Heebo', system-ui, sans-serif;
+  font-size: .78rem; font-weight: 500; letter-spacing: 0; white-space: nowrap;
+  cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.06);
   transition: all .18s var(--ease);
 }
-.auth-avatar:hover  { border-color: var(--accent); }
-.auth-avatar:active { transform: translateY(2px); }
+.google-btn:hover  { box-shadow: 0 1px 4px rgba(0,0,0,.18); border-color: #c6c9cc; }
+.google-btn:active { transform: translateY(2px); }
+.google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  height: 44px; max-width: 170px; padding: 0 14px 0 4px;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font-size: .78rem; font-weight: 500;
+  cursor: pointer; transition: all .18s var(--ease);
+}
+.user-chip:hover  { border-color: var(--accent); }
+.user-chip:active { transform: translateY(2px); }
+.user-chip img {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; object-fit: cover;
+}
+.user-chip span {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 
 /* ── controls ─────────────────────────────── */
 .controls { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
-.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .chip {
-  font-size: .78rem; font-weight: 500;
-  padding: 6px 12px; border-radius: 999px;
+  min-height: 44px;
+  font-size: .72rem; font-weight: 500; line-height: 1.35;
+  padding: 8px 6px; border-radius: 12px;
   border: 1px solid var(--border); background: var(--surface);
-  color: var(--text-2); cursor: pointer; user-select: none;
+  color: var(--text-2); cursor: pointer;
+  text-align: center; display: flex; align-items: center; justify-content: center;
   transition: all .18s var(--ease);
 }
 .chip:active { transform: translateY(2px); }
@@ -115,7 +150,6 @@ header {
   background: var(--accent-sf); border-color: var(--accent);
   color: var(--accent); font-weight: 600;
 }
-.chip input { display: none; }
 
 .segmented {
   display: flex; padding: 3px; gap: 3px;
@@ -123,7 +157,7 @@ header {
   border-radius: 12px;
 }
 .segmented button {
-  flex: 1; padding: 8px 10px; font-size: .8rem; font-weight: 500;
+  flex: 1; min-height: 44px; padding: 8px 10px; font-size: .8rem; font-weight: 500;
   font-family: inherit; border: none; border-radius: 9px;
   background: transparent; color: var(--text-2); cursor: pointer;
   transition: all .2s var(--ease);
@@ -134,28 +168,9 @@ header {
   font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08);
 }
 
-.switch-row {
-  display: flex; align-items: center; gap: 9px;
-  font-size: .78rem; color: var(--text-2); cursor: pointer; user-select: none;
-  padding: 2px;
-}
-.switch { position: relative; width: 34px; height: 20px; flex-shrink: 0; }
-.switch input { display: none; }
-.slider {
-  position: absolute; inset: 0; border-radius: 999px;
-  background: var(--border-2); transition: background .22s var(--ease);
-}
-.slider::after {
-  content: ''; position: absolute; top: 3px; right: 3px;
-  width: 14px; height: 14px; border-radius: 50%;
-  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25);
-  transition: transform .22s var(--ease);
-}
-.switch input:checked + .slider { background: var(--accent); }
-.switch input:checked + .slider::after { transform: translateX(-14px); }
-
 /* ── card ─────────────────────────────────── */
 .card-wrap {
+  position: relative;
   perspective: 1600px;
   width: 100%; max-width: 520px; min-height: 340px;
   cursor: pointer; margin-bottom: 4px;
@@ -203,18 +218,21 @@ header {
   opacity: .8;
 }
 .know-btn {
-  position: absolute; bottom: 14px; left: 18px;
-  width: 30px; height: 30px; border-radius: 10px;
+  position: absolute; bottom: 10px; left: 14px; z-index: 5;
+  display: flex; align-items: center; gap: 6px;
+  padding: 11px 18px; border-radius: 999px;
   border: 1px solid var(--border); background: var(--surface-2);
-  color: var(--muted); cursor: pointer; font-size: .95rem;
-  display: grid; place-items: center;
+  color: var(--text-2); cursor: pointer;
+  font-family: inherit; font-size: .78rem; font-weight: 500;
   transition: all .18s var(--ease);
 }
 .know-btn:hover  { border-color: var(--emerald); color: var(--emerald); }
 .know-btn:active { transform: translateY(2px); }
+.know-btn .chk { font-size: .85rem; line-height: 1; }
 .know-btn.on {
-  background: color-mix(in srgb, var(--emerald) 14%, transparent);
-  border-color: var(--emerald); color: var(--emerald);
+  background: var(--emerald); border-color: var(--emerald);
+  color: #fff; font-weight: 600;
+  box-shadow: 0 1px 2px rgba(5,150,105,.25), 0 6px 16px rgba(5,150,105,.25);
 }
 
 .transliteration {
@@ -241,7 +259,7 @@ header {
 
 .sound-btn {
   margin-top: 6px;
-  width: 42px; height: 42px; border-radius: 12px;
+  width: 44px; height: 44px; border-radius: 12px;
   border: 1px solid var(--border); background: var(--surface-2);
   color: var(--text-2); cursor: pointer; font-size: 1.05rem;
   display: grid; place-items: center;
@@ -263,7 +281,7 @@ header {
 .word-block .arabic-script  { font-size: clamp(.95rem, 3.6vw, 1.25rem); line-height: 1.85; }
 .gender-divider { height: 1px; background: var(--border); margin: 2px 8px; }
 .sound-btn-sm {
-  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
   border: 1px solid var(--border); background: var(--surface-2);
   color: var(--text-2); cursor: pointer; font-size: .9rem;
   display: grid; place-items: center;
@@ -300,6 +318,28 @@ header {
 .status { margin-top: 8px; font-size: .7rem; color: var(--muted); min-height: 1em; }
 
 .empty { color: var(--muted); font-size: .9rem; text-align: center; }
+
+.filter-label { font-size: .7rem; color: var(--muted); margin: 2px 2px -2px; }
+
+.credit {
+  margin-top: 26px; font-size: .72rem; color: var(--muted);
+  text-align: center;
+}
+.credit a {
+  color: var(--muted); text-decoration: underline; text-underline-offset: 2px;
+  transition: color .18s var(--ease);
+}
+.credit a:hover { color: var(--accent); }
+
+.confetti-piece {
+  position: fixed; top: 0; left: 0; width: 8px; height: 8px; border-radius: 2px;
+  pointer-events: none; z-index: 999;
+  animation: confetti-rise 950ms ease-out forwards;
+}
+@keyframes confetti-rise {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--dx, 0px), -300px) rotate(560deg); opacity: 0; }
+}
 </style>
 </head>
 <body>
@@ -309,8 +349,19 @@ header {
 <header>
   <div class="brand">כרטיסיות ערבית <span id="srcTag"></span></div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <button class="icon-btn" id="authBtn" onclick="signIn()" title="התחברות עם גוגל">👤</button>
-    <img class="auth-avatar" id="authAvatar" style="display:none" onclick="signOutUser()" alt="">
+    <button class="google-btn" id="authBtn" onclick="signIn()">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.7 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.3 18.9 12 24 12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.6 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.3C29.6 35.7 26.9 36.5 24 36.5c-5.4 0-9.9-3.3-11.5-7.9l-6.6 5.1C9.5 40.6 16.2 45 24 45z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 2.9-3.2 5.3-6.1 6.7l6.5 5.3C39.9 37 44 31.4 44 24c0-1.4-.1-2.7-.4-3.5z"/>
+      </svg>
+      <span>התחברות עם Google</span>
+    </button>
+    <button class="user-chip" id="userChip" style="display:none" onclick="signOutUser()" title="לחצו להתנתקות">
+      <img id="authAvatar" alt="">
+      <span id="authName"></span>
+    </button>
     <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="מצב תצוגה">◐</button>
   </div>
 </header>
@@ -321,14 +372,18 @@ header {
     <button id="btnAH" class="on" onclick="setDir('ah')">ערבית ← עברית</button>
     <button id="btnHA" onclick="setDir('ha')">עברית ← ערבית</button>
   </div>
-  <label class="switch-row">
-    <span class="switch"><input type="checkbox" id="saidOnly" onchange="rebuild()"><span class="slider"></span></span>
-    רק מילים שנאמרו בשיעור
-  </label>
-  <label class="switch-row">
-    <span class="switch"><input type="checkbox" id="hideKnown" onchange="rebuild()"><span class="slider"></span></span>
-    הסתר מילים שאני כבר יודע/ת
-  </label>
+  <div class="filter-label">נאמר בשיעור</div>
+  <div class="segmented" id="saidSeg">
+    <button class="on" data-v="all" onclick="setSaidFilter('all')">הכל</button>
+    <button data-v="said" onclick="setSaidFilter('said')">נאמרו</button>
+    <button data-v="not" onclick="setSaidFilter('not')">לא נאמרו</button>
+  </div>
+  <div class="filter-label">מילים שאני זוכר/ת</div>
+  <div class="segmented" id="knownSeg">
+    <button class="on" data-v="all" onclick="setKnownFilter('all')">הכל</button>
+    <button data-v="known" onclick="setKnownFilter('known')">זכורות</button>
+    <button data-v="not" onclick="setKnownFilter('not')">לא זכורות</button>
+  </div>
 </div>
 
 <div class="card-wrap" id="cardWrap" onclick="flip()">
@@ -337,14 +392,15 @@ header {
       <span class="lesson-tag" id="lessonTag"></span>
       <span class="badge" id="badgeEl" style="display:none">נאמר בשיעור</span>
       <div id="frontContent"></div>
-      <button class="know-btn" id="knowBtn" aria-label="סמן כידוע"
-        onclick="event.stopPropagation();toggleKnown(deck[idx].id)">☆</button>
       <span class="hint">לחצו לגילוי</span>
     </div>
     <div class="card-face card-back" id="cardBack">
       <div id="backContent"></div>
     </div>
   </div>
+  <button class="know-btn" id="knowBtn" aria-label="סמן כזכור" onclick="event.stopPropagation();markKnown()">
+    <span class="chk">✓</span><span>זוכר</span>
+  </button>
 </div>
 
 <div class="nav-row">
@@ -354,6 +410,7 @@ header {
 </div>
 <div class="counter" id="counter"></div>
 <div class="status" id="status"></div>
+<div class="credit">נבנה על ידי <a href="https://www.linkedin.com/in/tzahi-ben-shimol-411111197/" target="_blank" rel="noopener noreferrer">צחי בן שימול</a></div>
 
 <script type="text/plain" id="fallbackCsv">
 תעתיק,תרגום,ערבית,נאמר_בשיעור,הערות,שיעור
@@ -474,6 +531,7 @@ const LESSON_LABELS = {
 };
 
 let ALL = [], deck = [], idx = 0, dir = 'ah', lessons = [], enabled = new Set();
+let saidFilter = 'all', knownFilter = 'all';
 var knownIds = new Set();
 
 /* ── theme ────────────────────────────────── */
@@ -606,10 +664,10 @@ function show() {
   const c = deck[idx];
   document.getElementById('lessonTag').textContent = LESSON_LABELS[c.lesson] || c.lesson;
   document.getElementById('badgeEl').style.display = c.said ? '' : 'none';
-  const kb = document.getElementById('knowBtn');
   const isKnown = knownIds.has(c.id);
-  kb.textContent = isKnown ? '★' : '☆';
+  const kb = document.getElementById('knowBtn');
   kb.classList.toggle('on', isKnown);
+  kb.querySelector('.chk').textContent = isKnown ? '🎉' : '✓';
 
   const arSide = c.isGenderPair ? genderHTML(c) : arabicHTML(c);
   if (dir === 'ah') { fc.innerHTML = arSide;      bc.innerHTML = hebrewHTML(c); }
@@ -636,6 +694,52 @@ function show() {
 function flip()  { document.getElementById('cardWrap').classList.toggle('flipped'); }
 function move(n) { if (!deck.length) return; idx = (idx + n + deck.length) % deck.length; show(); }
 
+function playSparkle() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [1400, 1760, 2093, 2637].forEach(function (freq, i) {
+      const t = ctx.currentTime + i * 0.045;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.1, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.2);
+    });
+    setTimeout(function () { ctx.close(); }, 500);
+  } catch (e) {}
+}
+
+function burstConfetti(x, y) {
+  const colors = ['#4f46e5', '#6366f1', '#059669', '#e11d48', '#f59e0b'];
+  for (let i = 0; i < 22; i++) {
+    const el = document.createElement('span');
+    el.className = 'confetti-piece';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.animationDelay = (Math.random() * 100) + 'ms';
+    el.style.setProperty('--dx', (Math.random() * 180 - 90) + 'px');
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 1300);
+  }
+}
+
+async function markKnown() {
+  if (!deck.length || typeof toggleKnown !== 'function') return;
+  const nowKnown = await toggleKnown(deck[idx].id);
+  if (nowKnown === true) {
+    const rect = document.getElementById('knowBtn').getBoundingClientRect();
+    burstConfetti(rect.left + rect.width / 2, rect.top);
+    playSparkle();
+    setTimeout(function () { move(1); }, 480);
+  }
+}
+
 function shuffle() {
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -657,8 +761,7 @@ function renderChips() {
   lessons.forEach(function (ls) {
     const el = document.createElement('label');
     el.className = 'chip on';
-    el.textContent = ls;
-    el.title = LESSON_LABELS[ls] || ls;
+    el.textContent = LESSON_LABELS[ls] || ls;
     el.onclick = function () {
       if (enabled.has(ls)) { enabled.delete(ls); el.classList.remove('on'); }
       else { enabled.add(ls); el.classList.add('on'); }
@@ -668,11 +771,31 @@ function renderChips() {
   });
 }
 
+function setSaidFilter(v) {
+  saidFilter = v;
+  document.querySelectorAll('#saidSeg button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.v === v);
+  });
+  rebuild();
+}
+
+function setKnownFilter(v) {
+  knownFilter = v;
+  document.querySelectorAll('#knownSeg button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.v === v);
+  });
+  rebuild();
+}
+
 function rebuild() {
-  const saidOnly = document.getElementById('saidOnly').checked;
-  const hideKnown = document.getElementById('hideKnown').checked;
   deck = ALL.filter(function (c) {
-    return enabled.has(c.lesson) && (!saidOnly || c.said) && (!hideKnown || !knownIds.has(c.id));
+    if (!enabled.has(c.lesson)) return false;
+    if (saidFilter === 'said' && !c.said) return false;
+    if (saidFilter === 'not'  && c.said) return false;
+    const known = knownIds.has(c.id);
+    if (knownFilter === 'known' && !known) return false;
+    if (knownFilter === 'not'   && known) return false;
+    return true;
   });
   shuffle();
 }
@@ -743,31 +866,38 @@ async function loadKnown(uid) {
 }
 
 window.toggleKnown = async function (id) {
-  if (!id) return;
-  if (!currentUser) { window.signIn(); return; }
+  if (!id) return null;
+  if (!currentUser) { window.signIn(); return null; }
   const ref = doc(db, 'users', currentUser.uid);
+  let nowKnown;
   if (knownIds.has(id)) {
     knownIds.delete(id);
+    nowKnown = false;
     await setDoc(ref, { known: arrayRemove(id) }, { merge: true });
   } else {
     knownIds.add(id);
+    nowKnown = true;
     await setDoc(ref, { known: arrayUnion(id) }, { merge: true });
   }
   if (typeof show === 'function') show();
+  return nowKnown;
 };
 
 onAuthStateChanged(auth, function (user) {
   currentUser = user;
   const authBtn = document.getElementById('authBtn');
+  const userChip = document.getElementById('userChip');
   const authAvatar = document.getElementById('authAvatar');
+  const authName = document.getElementById('authName');
   if (user) {
     authBtn.style.display = 'none';
-    authAvatar.style.display = '';
+    userChip.style.display = '';
     authAvatar.src = user.photoURL || '';
-    authAvatar.title = (user.displayName || '') + ' · לחצו להתנתקות';
+    authName.textContent = user.displayName || user.email || '';
     loadKnown(user.uid);
   } else {
     authBtn.style.display = '';
+    userChip.style.display = 'none';
     authAvatar.style.display = 'none';
     knownIds = new Set();
     if (typeof rebuild === 'function') rebuild();
