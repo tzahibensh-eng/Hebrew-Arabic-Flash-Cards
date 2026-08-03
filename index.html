@@ -91,6 +91,14 @@ header {
 .icon-btn:hover  { border-color: var(--border-2); color: var(--text); }
 .icon-btn:active { transform: translateY(2px); }
 
+.auth-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--border); cursor: pointer; object-fit: cover;
+  transition: all .18s var(--ease);
+}
+.auth-avatar:hover  { border-color: var(--accent); }
+.auth-avatar:active { transform: translateY(2px); }
+
 /* ── controls ─────────────────────────────── */
 .controls { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
@@ -194,6 +202,20 @@ header {
   text-align: center; font-size: .7rem; color: var(--muted);
   opacity: .8;
 }
+.know-btn {
+  position: absolute; bottom: 14px; left: 18px;
+  width: 30px; height: 30px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface-2);
+  color: var(--muted); cursor: pointer; font-size: .95rem;
+  display: grid; place-items: center;
+  transition: all .18s var(--ease);
+}
+.know-btn:hover  { border-color: var(--emerald); color: var(--emerald); }
+.know-btn:active { transform: translateY(2px); }
+.know-btn.on {
+  background: color-mix(in srgb, var(--emerald) 14%, transparent);
+  border-color: var(--emerald); color: var(--emerald);
+}
 
 .transliteration {
   font-size: clamp(1.75rem, 7vw, 2.6rem); font-weight: 600;
@@ -286,7 +308,11 @@ header {
 
 <header>
   <div class="brand">כרטיסיות ערבית <span id="srcTag"></span></div>
-  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="מצב תצוגה">◐</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="icon-btn" id="authBtn" onclick="signIn()" title="התחברות עם גוגל">👤</button>
+    <img class="auth-avatar" id="authAvatar" style="display:none" onclick="signOutUser()" alt="">
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="מצב תצוגה">◐</button>
+  </div>
 </header>
 
 <div class="controls">
@@ -299,6 +325,10 @@ header {
     <span class="switch"><input type="checkbox" id="saidOnly" onchange="rebuild()"><span class="slider"></span></span>
     רק מילים שנאמרו בשיעור
   </label>
+  <label class="switch-row">
+    <span class="switch"><input type="checkbox" id="hideKnown" onchange="rebuild()"><span class="slider"></span></span>
+    הסתר מילים שאני כבר יודע/ת
+  </label>
 </div>
 
 <div class="card-wrap" id="cardWrap" onclick="flip()">
@@ -307,6 +337,8 @@ header {
       <span class="lesson-tag" id="lessonTag"></span>
       <span class="badge" id="badgeEl" style="display:none">נאמר בשיעור</span>
       <div id="frontContent"></div>
+      <button class="know-btn" id="knowBtn" aria-label="סמן כידוע"
+        onclick="event.stopPropagation();toggleKnown(deck[idx].id)">☆</button>
       <span class="hint">לחצו לגילוי</span>
     </div>
     <div class="card-face card-back" id="cardBack">
@@ -442,6 +474,7 @@ const LESSON_LABELS = {
 };
 
 let ALL = [], deck = [], idx = 0, dir = 'ah', lessons = [], enabled = new Set();
+var knownIds = new Set();
 
 /* ── theme ────────────────────────────────── */
 function applyTheme(t) {
@@ -494,13 +527,14 @@ function rowsToCards(rows) {
     const lesson = g('שיעור');
     const wordCount = he.split(/\s+/).filter(Boolean).length;
     const isPair = (tr.split('/').length - 1) === 1 && (ar.split('/').length - 1) === 1;
+    const id = lesson + '|' + tr;
     if (isPair) {
       const t = tr.split('/'), a = ar.split('/');
-      out.push({ isGenderPair: true, arM: t[0].trim(), arF: t[1].trim(),
+      out.push({ id: id, isGenderPair: true, arM: t[0].trim(), arF: t[1].trim(),
                  arabicM: a[0].trim(), arabicF: a[1].trim(),
                  he: he, note: note, said: said, lesson: lesson, wordCount: wordCount });
     } else {
-      out.push({ isGenderPair: false, ar: tr, arabic: ar,
+      out.push({ id: id, isGenderPair: false, ar: tr, arabic: ar,
                  he: he, note: note, said: said, lesson: lesson, wordCount: wordCount });
     }
   }
@@ -572,6 +606,10 @@ function show() {
   const c = deck[idx];
   document.getElementById('lessonTag').textContent = LESSON_LABELS[c.lesson] || c.lesson;
   document.getElementById('badgeEl').style.display = c.said ? '' : 'none';
+  const kb = document.getElementById('knowBtn');
+  const isKnown = knownIds.has(c.id);
+  kb.textContent = isKnown ? '★' : '☆';
+  kb.classList.toggle('on', isKnown);
 
   const arSide = c.isGenderPair ? genderHTML(c) : arabicHTML(c);
   if (dir === 'ah') { fc.innerHTML = arSide;      bc.innerHTML = hebrewHTML(c); }
@@ -632,8 +670,9 @@ function renderChips() {
 
 function rebuild() {
   const saidOnly = document.getElementById('saidOnly').checked;
+  const hideKnown = document.getElementById('hideKnown').checked;
   deck = ALL.filter(function (c) {
-    return enabled.has(c.lesson) && (!saidOnly || c.said);
+    return enabled.has(c.lesson) && (!saidOnly || c.said) && (!hideKnown || !knownIds.has(c.id));
   });
   shuffle();
 }
@@ -675,6 +714,65 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'ArrowLeft')  move(1);
   if (e.key === 'ArrowRight') move(-1);
   if (e.key === ' ') { e.preventDefault(); flip(); }
+});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, arrayUnion, arrayRemove }
+  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const app = initializeApp({"apiKey": "AIzaSyCNGYq4rLwx8h2ffO4n-AxJBlpaW1D1fhs", "authDomain": "danshi-83fe9.firebaseapp.com", "projectId": "danshi-83fe9", "storageBucket": "danshi-83fe9.firebasestorage.app", "messagingSenderId": "811151615732", "appId": "1:811151615732:web:5b0210ad256a35236460a1", "measurementId": "G-Z2RJ53RWYY"});
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+let currentUser = null;
+
+window.signIn = function () {
+  signInWithPopup(auth, provider).catch(function (e) { alert('שגיאת התחברות: ' + e.message); });
+};
+window.signOutUser = function () { signOut(auth); };
+
+async function loadKnown(uid) {
+  const snap = await getDoc(doc(db, 'users', uid));
+  knownIds = new Set(snap.exists() ? (snap.data().known || []) : []);
+  if (typeof rebuild === 'function') rebuild();
+  if (typeof show === 'function') show();
+}
+
+window.toggleKnown = async function (id) {
+  if (!id) return;
+  if (!currentUser) { window.signIn(); return; }
+  const ref = doc(db, 'users', currentUser.uid);
+  if (knownIds.has(id)) {
+    knownIds.delete(id);
+    await setDoc(ref, { known: arrayRemove(id) }, { merge: true });
+  } else {
+    knownIds.add(id);
+    await setDoc(ref, { known: arrayUnion(id) }, { merge: true });
+  }
+  if (typeof show === 'function') show();
+};
+
+onAuthStateChanged(auth, function (user) {
+  currentUser = user;
+  const authBtn = document.getElementById('authBtn');
+  const authAvatar = document.getElementById('authAvatar');
+  if (user) {
+    authBtn.style.display = 'none';
+    authAvatar.style.display = '';
+    authAvatar.src = user.photoURL || '';
+    authAvatar.title = (user.displayName || '') + ' · לחצו להתנתקות';
+    loadKnown(user.uid);
+  } else {
+    authBtn.style.display = '';
+    authAvatar.style.display = 'none';
+    knownIds = new Set();
+    if (typeof rebuild === 'function') rebuild();
+    if (typeof show === 'function') show();
+  }
 });
 </script>
 </body>
