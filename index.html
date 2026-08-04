@@ -2,1017 +2,264 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>כרטיסיות ערבית</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:        #f4f4f5;
-  --bg-soft:   #ebebed;
-  --surface:   #fffefc;
-  --surface-2: #ffffff;
-  --border:    #e4e4e7;
-  --border-2:  #d4d4d8;
-  --text:      #18181b;
-  --text-2:    #52525b;
-  --muted:     #a1a1aa;
-  --accent:    #4f46e5;
-  --accent-2:  #6366f1;
-  --accent-sf: #eef2ff;
-  --emerald:   #059669;
-  --rose:      #e11d48;
-  --shadow-1:  0 1px 2px rgba(24,24,27,.04), 0 4px 12px rgba(24,24,27,.05), 0 16px 40px rgba(24,24,27,.06);
-  --shadow-2:  0 2px 4px rgba(24,24,27,.05), 0 8px 20px rgba(24,24,27,.07), 0 24px 60px rgba(79,70,229,.10);
-  --ease:      cubic-bezier(.4,0,.2,1);
-}
-html[data-theme="dark"] {
-  --bg:        #0b0b0f;
-  --bg-soft:   #131318;
-  --surface:   #17171d;
-  --surface-2: #1d1d25;
-  --border:    #27272f;
-  --border-2:  #35353f;
-  --text:      #f4f4f5;
-  --text-2:    #a1a1aa;
-  --muted:     #6b6b76;
-  --accent:    #818cf8;
-  --accent-2:  #a5b4fc;
-  --accent-sf: #1e1b3a;
-  --emerald:   #34d399;
-  --rose:      #fb7185;
-  --shadow-1:  0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
-  --shadow-2:  0 2px 6px rgba(0,0,0,.45), 0 12px 32px rgba(0,0,0,.4), 0 24px 60px rgba(129,140,248,.12);
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 16px; }
+  h1 { color: #e94560; margin: 16px 0 12px; font-size: clamp(1.4rem, 5vw, 2rem); }
+  .filter { margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .filter label { cursor: pointer; padding: 6px 14px; border-radius: 20px; background: #16213e; border: 2px solid #0f3460; user-select: none; font-size: 0.85rem; }
+  .filter label:has(input:checked) { border-color: #e94560; color: #e94560; }
+  .filter input[type=checkbox] { display: none; }
+  .dir-toggle { margin-bottom: 14px; display: flex; gap: 8px; }
+  .dir-toggle button { background: #0f3460; color: #aaa; font-size: 0.85rem; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; }
+  .dir-toggle button.active { background: #e94560; color: white; }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  .card-wrap { perspective: 1000px; width: min(92vw, 420px); min-height: 260px; cursor: pointer; }
+  .card-inner { position: relative; width: 100%; min-height: 260px; transition: transform 0.45s; transform-style: preserve-3d; }
+  .card-wrap.flipped .card-inner { transform: rotateY(180deg); }
+  .card-face { position: absolute; width: 100%; min-height: 260px; backface-visibility: hidden; background: #16213e; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 28px 20px; box-shadow: 0 8px 32px #0006; }
+  .card-back { transform: rotateY(180deg); }
 
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-html, body { overflow-x: hidden; max-width: 100vw; }
+  .lesson-tag { font-size: 0.72rem; color: #555; position: absolute; top: 14px; right: 18px; }
+  .arabic-script { font-size: clamp(1rem, 4vw, 1.3rem); color: #888; direction: rtl; text-align: center; line-height: 1.4; }
+  .transliteration { font-size: clamp(2rem, 7vw, 2.8rem); color: #e94560; text-align: center; line-height: 1.3; }
+  .hebrew-text { font-size: clamp(1.5rem, 6vw, 2.2rem); color: #a8dadc; text-align: center; }
+  .hint { font-size: 0.8rem; color: #444; position: absolute; bottom: 14px; }
 
-body {
-  font-family: 'Heebo','Inter',system-ui,-apple-system,sans-serif;
-  font-size: 16px;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex; flex-direction: column; align-items: center;
-  padding: env(safe-area-inset-top) calc(16px + env(safe-area-inset-right))
-           calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
-  transition: background .3s var(--ease), color .3s var(--ease);
-  -webkit-font-smoothing: antialiased;
-}
+  .sound-btn { position: absolute; bottom: 14px; left: 18px; background: none; border: none; cursor: pointer; font-size: 1.4rem; color: #555; padding: 4px; line-height: 1; }
+  .sound-btn:hover { color: #e94560; }
 
-button, .chip, .segmented button {
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* ── progress ─────────────────────────────── */
-.progress-track {
-  position: fixed; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--border); z-index: 50;
-}
-.progress-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  transition: width .35s var(--ease);
-}
-
-/* ── header ───────────────────────────────── */
-header {
-  width: 100%; max-width: 520px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 2px 16px;
-}
-.brand { font-size: .95rem; font-weight: 600; letter-spacing: -.01em; color: var(--text); }
-.brand span { color: var(--muted); font-weight: 400; }
-
-.icon-btn {
-  width: 44px; height: 44px; border-radius: 12px;
-  border: 1px solid var(--border); background: var(--surface);
-  color: var(--text-2); cursor: pointer; font-size: .95rem;
-  display: grid; place-items: center;
-  transition: all .18s var(--ease);
-}
-.icon-btn:hover  { border-color: var(--border-2); color: var(--text); }
-.icon-btn:active { transform: translateY(2px); }
-
-.google-btn {
-  display: flex; align-items: center; gap: 7px;
-  height: 44px; padding: 0 14px;
-  border-radius: 8px; border: 1px solid #dadce0; background: #fff;
-  color: #3c4043; font-family: 'Inter', 'Heebo', system-ui, sans-serif;
-  font-size: .78rem; font-weight: 500; letter-spacing: 0; white-space: nowrap;
-  cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.06);
-  transition: all .18s var(--ease);
-}
-.google-btn:hover  { box-shadow: 0 1px 4px rgba(0,0,0,.18); border-color: #c6c9cc; }
-.google-btn:active { transform: translateY(2px); }
-.google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-.user-chip {
-  display: flex; align-items: center; gap: 8px;
-  height: 44px; max-width: 170px; padding: 0 14px 0 4px;
-  border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
-  color: var(--text); font-size: .78rem; font-weight: 500;
-  cursor: pointer; transition: all .18s var(--ease);
-}
-.user-chip:hover  { border-color: var(--accent); }
-.user-chip:active { transform: translateY(2px); }
-.user-chip img {
-  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; object-fit: cover;
-}
-.user-chip span {
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-
-/* ── controls ─────────────────────────────── */
-.controls { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-
-.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.chip {
-  min-height: 44px;
-  font-size: .72rem; font-weight: 500; line-height: 1.35;
-  padding: 8px 6px; border-radius: 12px;
-  border: 1px solid var(--border); background: var(--surface);
-  color: var(--text-2); cursor: pointer;
-  text-align: center; display: flex; align-items: center; justify-content: center;
-  transition: all .18s var(--ease);
-}
-.chip:active { transform: translateY(2px); }
-.chip.on {
-  background: var(--accent-sf); border-color: var(--accent);
-  color: var(--accent); font-weight: 600;
-}
-
-.segmented {
-  display: flex; padding: 3px; gap: 3px;
-  background: var(--bg-soft); border: 1px solid var(--border);
-  border-radius: 12px;
-}
-.segmented button {
-  flex: 1; min-height: 44px; padding: 8px 10px; font-size: .8rem; font-weight: 500;
-  font-family: inherit; border: none; border-radius: 9px;
-  background: transparent; color: var(--text-2); cursor: pointer;
-  transition: all .2s var(--ease);
-}
-.segmented button:active { transform: translateY(2px); }
-.segmented button.on {
-  background: var(--surface-2); color: var(--text);
-  font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08);
-}
-
-/* ── card ─────────────────────────────────── */
-.card-wrap {
-  position: relative;
-  perspective: 1600px;
-  width: 100%; max-width: 520px; min-height: 340px;
-  cursor: pointer; margin-bottom: 4px;
-}
-.card-inner {
-  position: relative; width: 100%; min-height: 340px;
-  transform-style: preserve-3d;
-  transition: transform .6s var(--ease);
-}
-.card-wrap.flipped .card-inner { transform: rotateY(180deg); }
-
-.card-face {
-  position: absolute; inset: 0; width: 100%; min-height: 340px;
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  box-shadow: var(--shadow-1);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 14px;
-  padding: 46px 26px 52px;
-  transition: box-shadow .28s var(--ease), border-color .28s var(--ease);
-}
-.card-wrap:hover .card-face {
-  box-shadow: var(--shadow-2);
-  border-color: var(--accent);
-}
-.card-back { transform: rotateY(180deg); }
-
-.lesson-tag {
-  position: absolute; top: 16px; right: 20px;
-  font-size: .68rem; font-weight: 500; letter-spacing: .01em;
-  color: var(--muted);
-}
-.badge {
-  position: absolute; top: 15px; left: 20px;
-  font-size: .62rem; font-weight: 600;
-  padding: 3px 9px; border-radius: 999px;
-  background: color-mix(in srgb, var(--emerald) 12%, transparent);
-  color: var(--emerald);
-}
-.hint {
-  position: absolute; bottom: 17px; left: 0; right: 0;
-  text-align: center; font-size: .7rem; color: var(--muted);
-  opacity: .8;
-}
-.know-row {
-  width: 100%; max-width: 520px;
-  display: flex; justify-content: center; margin-top: 14px;
-}
-.know-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 12px 22px; border-radius: 999px;
-  border: 1px solid var(--border); background: var(--surface-2);
-  color: var(--text-2); cursor: pointer;
-  font-family: inherit; font-size: .82rem; font-weight: 500;
-  transition: all .18s var(--ease);
-}
-.know-btn:hover  { border-color: var(--emerald); color: var(--emerald); }
-.know-btn:active { transform: translateY(2px); }
-.know-btn .chk { font-size: .9rem; line-height: 1; }
-.know-btn.on {
-  background: var(--emerald); border-color: var(--emerald);
-  color: #fff; font-weight: 600;
-  box-shadow: 0 1px 2px rgba(5,150,105,.25), 0 6px 16px rgba(5,150,105,.25);
-}
-
-.transliteration {
-  font-size: clamp(1.75rem, 7vw, 2.6rem); font-weight: 600;
-  letter-spacing: -.02em; line-height: 1.25;
-  color: var(--text); text-align: center;
-}
-.arabic-script {
-  font-family: 'Noto Naskh Arabic', serif;
-  font-size: clamp(1.1rem, 4.4vw, 1.55rem); font-weight: 400;
-  direction: rtl; line-height: 2; color: var(--text-2); text-align: center;
-}
-.hebrew-text {
-  font-size: clamp(1.45rem, 6vw, 2.1rem); font-weight: 500;
-  letter-spacing: -.015em; line-height: 1.45;
-  color: var(--text); text-align: center;
-}
-.note {
-  margin-top: 4px; max-width: 90%;
-  font-size: .78rem; font-weight: 300; line-height: 1.6;
-  color: var(--muted); text-align: center;
-  padding-top: 12px; border-top: 1px solid var(--border);
-}
-
-.sound-btn {
-  margin-top: 6px;
-  width: 44px; height: 44px; border-radius: 12px;
-  border: 1px solid var(--border); background: var(--surface-2);
-  color: var(--text-2); cursor: pointer; font-size: 1.05rem;
-  display: grid; place-items: center;
-  transition: all .18s var(--ease);
-}
-.sound-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-sf); }
-.sound-btn:active { transform: translateY(2px); }
-
-/* gender pair */
-.gender-pair { width: 100%; display: flex; flex-direction: column; gap: 4px; }
-.gender-row  { display: flex; align-items: center; gap: 12px; padding: 8px 2px; }
-.gender-label {
-  font-size: .62rem; font-weight: 600; letter-spacing: .04em;
-  color: var(--muted); min-width: 40px; text-align: center; flex-shrink: 0;
-  padding: 3px 0; border-radius: 6px; background: var(--bg-soft);
-}
-.word-block { flex: 1; text-align: center; min-width: 0; }
-.word-block .transliteration { font-size: clamp(1.35rem, 5.4vw, 1.95rem); }
-.word-block .arabic-script  { font-size: clamp(.95rem, 3.6vw, 1.25rem); line-height: 1.85; }
-.gender-divider { height: 1px; background: var(--border); margin: 2px 8px; }
-.sound-btn-sm {
-  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
-  border: 1px solid var(--border); background: var(--surface-2);
-  color: var(--text-2); cursor: pointer; font-size: .9rem;
-  display: grid; place-items: center;
-  transition: all .18s var(--ease);
-}
-.sound-btn-sm:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-sf); }
-.sound-btn-sm:active { transform: translateY(2px); }
-
-/* ── nav ──────────────────────────────────── */
-.nav-row {
-  width: 100%; max-width: 520px;
-  display: flex; gap: 8px; margin-top: 18px;
-}
-.nav-btn {
-  flex: 1; padding: 13px 10px;
-  font-family: inherit; font-size: .88rem; font-weight: 500;
-  border-radius: 12px; border: 1px solid var(--border);
-  background: var(--surface); color: var(--text-2); cursor: pointer;
-  transition: all .18s var(--ease);
-}
-.nav-btn:hover  { border-color: var(--border-2); color: var(--text); }
-.nav-btn:active { transform: translateY(2px); }
-.nav-btn.primary {
-  flex: 1.4;
-  background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600;
-  box-shadow: 0 1px 2px rgba(79,70,229,.2), 0 6px 16px rgba(79,70,229,.22);
-}
-.nav-btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
-
-.counter {
-  margin-top: 14px; font-size: .74rem; font-weight: 400;
-  color: var(--muted); letter-spacing: .02em;
-}
-.status { margin-top: 8px; font-size: .7rem; color: var(--muted); min-height: 1em; }
-
-.empty { color: var(--muted); font-size: .9rem; text-align: center; }
-
-.filter-label { font-size: .7rem; color: var(--muted); margin: 2px 2px -2px; }
-
-.credit {
-  margin-top: 26px; font-size: .72rem; color: var(--muted);
-  text-align: center;
-}
-.credit a {
-  color: var(--muted); text-decoration: underline; text-underline-offset: 2px;
-  transition: color .18s var(--ease);
-}
-.credit a:hover { color: var(--accent); }
-
-.confetti-piece {
-  position: fixed; top: 0; left: 0; width: 8px; height: 8px; border-radius: 2px;
-  pointer-events: none; z-index: 999;
-  animation: confetti-rise 950ms ease-out forwards;
-}
-@keyframes confetti-rise {
-  0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-  100% { transform: translate(var(--dx, 0px), -300px) rotate(560deg); opacity: 0; }
-}
+  .controls { margin-top: 16px; display: flex; gap: 10px; }
+  button.nav { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; }
+  .btn-next { background: #e94560; color: white; }
+  .btn-prev { background: #0f3460; color: white; }
+  .btn-shuffle { background: #333; color: white; }
+  .progress { margin-top: 12px; color: #666; font-size: 0.85rem; }
 </style>
 </head>
 <body>
+<h1>🃏 כרטיסיות ערבית</h1>
 
-<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="filter">
+  <label><input type="checkbox" data-lesson="שיעור 9" checked onchange="rebuild()"><span>שיעור 9 – כינויי כבוד</span></label>
+  <label><input type="checkbox" data-lesson="שיעור 10" checked onchange="rebuild()"><span>שיעור 10 – ניהול שיחה</span></label>
+  <label><input type="checkbox" data-lesson="שיעור 11" checked onchange="rebuild()"><span>שיעור 11 – מצבי רוח</span></label>
+  <label><input type="checkbox" data-lesson="שיעור 12" checked onchange="rebuild()"><span>שיעור 12 – מילות שאלה</span></label>
+  <label><input type="checkbox" data-lesson="שיעור 13" checked onchange="rebuild()"><span>שיעור 13 – הצגה עצמית</span></label>
+</div>
 
-<header>
-  <div class="brand">כרטיסיות ערבית <span id="srcTag"></span></div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <button class="google-btn" id="authBtn" onclick="signIn()">
-      <svg viewBox="0 0 48 48" aria-hidden="true">
-        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.7 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/>
-        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.3 18.9 12 24 12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.6 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/>
-        <path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.3C29.6 35.7 26.9 36.5 24 36.5c-5.4 0-9.9-3.3-11.5-7.9l-6.6 5.1C9.5 40.6 16.2 45 24 45z"/>
-        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 2.9-3.2 5.3-6.1 6.7l6.5 5.3C39.9 37 44 31.4 44 24c0-1.4-.1-2.7-.4-3.5z"/>
-      </svg>
-      <span>התחברות עם Google</span>
-    </button>
-    <button class="user-chip" id="userChip" style="display:none" onclick="signOutUser()" title="לחצו להתנתקות">
-      <img id="authAvatar" alt="">
-      <span id="authName"></span>
-    </button>
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="מצב תצוגה">◐</button>
-  </div>
-</header>
-
-<div class="controls">
-  <div class="chips" id="chips"></div>
-  <div class="segmented">
-    <button id="btnAH" class="on" onclick="setDir('ah')">ערבית ← עברית</button>
-    <button id="btnHA" onclick="setDir('ha')">עברית ← ערבית</button>
-  </div>
-  <div class="filter-label">נאמר בשיעור</div>
-  <div class="segmented" id="saidSeg">
-    <button class="on" data-v="all" onclick="setSaidFilter('all')">הכל</button>
-    <button data-v="said" onclick="setSaidFilter('said')">נאמרו</button>
-    <button data-v="not" onclick="setSaidFilter('not')">לא נאמרו</button>
-  </div>
-  <div class="filter-label">מילים שאני זוכר/ת</div>
-  <div class="segmented" id="knownSeg">
-    <button class="on" data-v="all" onclick="setKnownFilter('all')">הכל</button>
-    <button data-v="known" onclick="setKnownFilter('known')">זכורות</button>
-    <button data-v="not" onclick="setKnownFilter('not')">לא זכורות</button>
-  </div>
+<div class="dir-toggle">
+  <button id="btnAH" class="active" onclick="setDir('ah')">ערבית ← עברית</button>
+  <button id="btnHA" onclick="setDir('ha')">עברית ← ערבית</button>
 </div>
 
 <div class="card-wrap" id="cardWrap" onclick="flip()">
   <div class="card-inner" id="cardInner">
-    <div class="card-face" id="cardFront">
-      <span class="lesson-tag" id="lessonTag"></span>
-      <span class="badge" id="badgeEl" style="display:none">נאמר בשיעור</span>
-      <div id="frontContent"></div>
-      <span class="hint">לחצו לגילוי</span>
+    <div class="card-face card-front">
+      <span class="lesson-tag" id="lesson"></span>
+      <div class="arabic-script" id="front"></div>
+      <div class="transliteration" id="translit"></div>
+      <button class="sound-btn" id="soundBtn" onclick="event.stopPropagation(); speak()" title="השמע">🔊</button>
+      <span class="hint" id="hintFront">לחץ לגלות</span>
     </div>
-    <div class="card-face card-back" id="cardBack">
-      <div id="backContent"></div>
+    <div class="card-face card-back">
+      <div class="hebrew-text" id="back"></div>
+      <button class="sound-btn" id="soundBtnBack" onclick="event.stopPropagation(); speakBack()" title="השמע">🔊</button>
     </div>
   </div>
 </div>
 
-<div class="know-row">
-  <button class="know-btn" id="knowBtn" aria-label="סמן כזכור" onclick="markKnown()">
-    <span class="chk">✓</span><span>זוכר</span>
-  </button>
+<div class="controls">
+  <button class="nav btn-prev" onclick="move(-1)">◀ קודם</button>
+  <button class="nav btn-shuffle" onclick="shuffle()">🔀 ערבב</button>
+  <button class="nav btn-next" onclick="move(1)">הבא ▶</button>
 </div>
-
-<div class="nav-row">
-  <button class="nav-btn" onclick="event.stopPropagation();move(-1)">קודם</button>
-  <button class="nav-btn" onclick="event.stopPropagation();shuffle()">ערבב</button>
-  <button class="nav-btn primary" onclick="event.stopPropagation();move(1)">הבא</button>
-</div>
-<div class="counter" id="counter"></div>
-<div class="status" id="status"></div>
-<div class="credit">נבנה על ידי <a href="https://www.linkedin.com/in/tzahi-ben-shimol-411111197/" target="_blank" rel="noopener noreferrer">צחי בן שימול</a></div>
-
-<script type="text/plain" id="fallbackCsv">
-תעתיק,תרגום,ערבית,נאמר_בשיעור,הערות,שיעור,נושא
-יַאאַמִיר/אַמִירַה,נסיך/נסיכה,يَا أَمِير/يَا أَمِيرَة,לא,,שיעור 9,כינויי כבוד
-יַאחַבִּיבִּי/חַבִּיבְּתִי,אהובי/אהובתי,يَا حَبِيبِي/يَا حَبِيبَتِي,לא,,שיעור 9,כינויי כבוד
-יַאעַזִיזִי/עַזִיזְתִי,יקירי/יקירתי,يَا عَزِيزِي/يَا عَزِيزَتِي,לא,,שיעור 9,כינויי כבוד
-יַאזַלַמֶה,"חבר (משלב נמוך, בשיחה)",يَا زَلَمَة,לא,,שיעור 9,כינויי כבוד
-יַאאַח'וּי/יַאחְ'תִי,אחי/אחותי,يَا أَخُوي/يَا أُخْتِي,לא,,שיעור 9,כינויי כבוד
-יַאסַאחְבִּי/סַאחִבְּתִי,חבר/חברה,يَا صَاحِبِي/يَا صَاحِبَتِي,לא,,שיעור 9,כינויי כבוד
-יַאעַמִי/חַ'אלִי,דוד/דודה (אדם קרוב),يَا عَمِّي/يَا خَالِي,לא,,שיעור 9,כינויי כבוד
-יַאוּעַם/עַמַּה,אדון/גברת מבוגר/ת,يَا وَعَمُّو/يَا عَمَّة,לא,,שיעור 9,כינויי כבוד
-יַאמְעַלֵּם/מְעַלְּמֶה,מורה/גברת (אדם לא מוכר),يَا مُعَلِّم/يَا مُعَلِّمَة,לא,,שיעור 9,כינויי כבוד
-יַאאֻסְתַאז/אֻסְתַאזֵה,מר/גברת,يَا أُسْتَاذ/يَا أُسْتَاذَة,לא,,שיעור 9,כינויי כבוד
-יַאסַיִּד/סַיִּדַה,אדון/גברת,يَا سَيِّد/يَا سَيِّدَة,לא,,שיעור 9,כינויי כבוד
-יַאמֻחְתַרַם/מֻחְתַרְמֶה,מכובד/מכובדת,يَا مُحْتَرَم/يَا مُحْتَرَمَة,לא,,שיעור 9,כינויי כבוד
-יַאחַאג'/חַאגֶּה,עולי רגל / מבוגרים (מעל גיל 50),يَا حَاجّ/يَا حَاجَّة,לא,,שיעור 9,כינויי כבוד
-יַאחַדְרַת אל...,מכובד / בעל תפקיד,يَا حَضْرَة الـ...,לא,,שיעור 9,כינויי כבוד
-יַאגַ'לַאלַת אלְמַלִכּ,הוד מעלת המלך,يَا جَلَالَة الْمَلِك,לא,,שיעור 9,כינויי כבוד
-כִּיף חַאלַכּ/כִּיף חַאלֵכּ?,איך אתה/את?,كَيْف حَالَكَ؟/كَيْف حَالِكِ؟,לא,,שיעור 10,ניהול שיחה
-כִּיף אלְחַאל?,איך המצב?,كَيْف الْحَال؟,לא,,שיעור 10,ניהול שיחה
-כִּיפַכּ/כִּיפֵכּ?,איך אתה/את? (קצר),كَيْفَكَ؟/كَيْفِكِ؟,לא,,שיעור 10,ניהול שיחה
-כִּיף אלְאֻמוּר?,איך העניינים?,كَيْف الْأُمُور؟,לא,,שיעור 10,ניהול שיחה
-שׁוּ אלְוַדְע?,מה המצב?,شُو الْوَضْع؟,לא,,שיעור 10,ניהול שיחה
-כִּיף סַחְתַּכּ/כִּיף סַחְתֵּכּ?,איך הבריאות שלך?,كَيْف صِحَّتَكَ؟/كَيْف صِحَّتِكِ؟,לא,,שיעור 10,ניהול שיחה
-אֵלְחַמְדֻלִלַּה,תודה לאל,الْحَمْدُ لِلَّه,לא,,שיעור 10,ניהול שיחה
-שׁוּ אלְאַחְבַּאר?,מה החדשות?,شُو الْأَخْبَار؟,לא,,שיעור 10,ניהול שיחה
-פִיה כְּתִיר אַחְבַּאר,יש הרבה חדשות,فِيه كْتِير أَخْبَار,לא,,שיעור 10,ניהול שיחה
-וֵין אִנְתֶ/אִנְתִי?,איפה אתה/את?,وَيْن إِنْتَ؟/وَيْن إِنْتِي؟,לא,,שיעור 10,ניהול שיחה
-וֵינַכּ/וֵינֵכּ?,איפה אתה/את? (קצר),وَيْنَكَ؟/وَيْنِكِ؟,לא,,שיעור 10,ניהול שיחה
-שׁוּ כְּבִּדַכּ/שׁוּ כְּבִּדֵכּ?,מה אתה/את רוצה?,شُو بِدَّكَ؟/شُو بِدِّكِ؟,לא,,שיעור 10,ניהול שיחה
-יְבִּדִי אַתְעַלַּ עַרַבִּי,אני רוצה ללמוד ערבית,بِدِّي أَتْعَلَّم عَرَبِي,לא,,שיעור 10,ניהול שיחה
-מַא יְבִּדִי וַלַא אִישִׁי,אני לא רוצה שום דבר,مَا بِدِّي وَلَا إِشِي,לא,,שיעור 10,ניהול שיחה
-שׁוּ בְּתִסַּוִי?,מה אתה/את עושה?,شُو بِتْسَاوِي؟,לא,,שיעור 10,ניהול שיחה
-שׁוּ סַּוֵיתּ?,מה עשית?,شُو سَوَّيْت؟,לא,,שיעור 10,ניהול שיחה
-שׁוּ סַאר?,מה קרה?,شُو صَار؟,לא,,שיעור 10,ניהול שיחה
-מַא סַארְשִׁי,לא קרה כלום,مَا صَارْشِي,לא,,שיעור 10,ניהול שיחה
-וַלַד/וּלַאד,ילד/ילדים,وَلَد/وْلَاد,לא,,שיעור 10,ניהול שיחה
-מַרַה,אישה,مَرَة,לא,,שיעור 10,ניהול שיחה
-ג'וֹז,בעל,جُوز,לא,,שיעור 10,ניהול שיחה
-מַטְעַם,מסעדה,مَطْعَم,לא,,שיעור 10,ניהול שיחה
-בַּחְר,ים,بَحْر,לא,,שיעור 10,ניהול שיחה
-גַ'אר/גִ'ירַאן,שכן/שכנים,جَار/جِيرَان,לא,,שיעור 10,ניהול שיחה
-וַזִיפֵה/וַזַאאֵף,"מטלות, שיעורי בית",وَظِيفَة/وَظَايِف,לא,,שיעור 10,ניהול שיחה
-מֻשְׁכִּלֵה/מַשַׁאכֵּל,בעיה/בעיות,مُشْكِلَة/مَشَاكِل,לא,,שיעור 10,ניהול שיחה
-דַרְס,שיעור,دَرْس,לא,,שיעור 10,ניהול שיחה
-סַעְבּ,קשה,صَعْب,לא,,שיעור 10,ניהול שיחה
-פַרְחַאן,שמח,فَرْحَان,לא,,שיעור 11,מצבי רוח
-אַהְבַּל,מטופש,أَهْبَل,לא,,שיעור 11,מצבי רוח
-עַיַאן/מַרִידֿ,חולה,عَيَّان/مَرِيض,לא,,שיעור 11,מצבי רוח
-נֻסֿ בִּנֻסֿ,ככה ככה,نُصّ بِنُصّ,לא,,שיעור 11,מצבי רוח
-בַּאכִּי,בוכה,بَاكِي,לא,,שיעור 11,מצבי רוח
-מִיֶה בִּלְמִיֶה,מצוין,مِيَّة بِالْمِيَّة,לא,,שיעור 11,מצבי רוח
-מֻזְעַג',עצבני,مُزْعُوج,לא,,שיעור 11,מצבי רוח
-תַעְבַּאן,עייף,تَعْبَان,לא,,שיעור 11,מצבי רוח
-מַבְּסוּט,מרוצה,مَبْسُوط,לא,,שיעור 11,מצבי רוח
-מַאשִׁי,בסדר,مَاشِي,לא,,שיעור 11,מצבי רוח
-חַזִין,עצוב,حَزِين,לא,,שיעור 11,מצבי רוח
-מְנִיח,טוב,مْنِيح,לא,,שיעור 11,מצבי רוח
-זַעְלַאן,כועס,زَعْلَان,לא,,שיעור 11,מצבי רוח
-ג'וּעַאן,רעב,جُوعَان,לא,,שיעור 11,מצבי רוח
-נַעְסַאן,מנומנם,نَاعِسَان,לא,,שיעור 11,מצבי רוח
-מִין?,מי?,مِين؟,לא,,שיעור 12,מילות שאלה
-מַעַ מִין?,עם מי?,مَعَ مِين؟,לא,,שיעור 12,מילות שאלה
-לַעִנְד מִין?,אצל מי?,لَعِنْد مِين؟,לא,,שיעור 12,מילות שאלה
-שׁוּ?,מה?,شُو؟,לא,,שיעור 12,מילות שאלה
-אֵמְתַא?,מתי?,إِيمَتَى؟,לא,,שיעור 12,מילות שאלה
-וֵין?,איפה?,وَيْن؟,לא,,שיעור 12,מילות שאלה
-מִן וֵין?,מאיפה?,مِن وَيْن؟,לא,,שיעור 12,מילות שאלה
-לַוֵין?,לאן?,لَوَيْن؟,לא,,שיעור 12,מילות שאלה
-כִּיף?,איך?,كَيْف؟,לא,,שיעור 12,מילות שאלה
-לֵישׁ?,למה?,لَيْش؟,לא,,שיעור 12,מילות שאלה
-לַשׁוּ?,בשביל מה?,لَشُو؟,לא,,שיעור 12,מילות שאלה
-קַדֵישׁ?,כמה? (לא ספירים),قَدَّيْش؟,לא,,שיעור 12,מילות שאלה
-אַכַּם?,כמה? (ספירים),أَكَّم؟,לא,,שיעור 12,מילות שאלה
-אַי?/אַנוּ?,איזה?,أَيّ؟/أَنُو؟,לא,,שיעור 12,מילות שאלה
-אִסְמִי,שמי,اسْمِي,לא,,שיעור 13,הצגה עצמית
-בִּסַמּוּנִי,קוראים לי,بِسَمُّونِي,לא,,שיעור 13,הצגה עצמית
-עֵילֶה,משפחה,عَيْلَة,לא,,שיעור 13,הצגה עצמית
-סַאכֵּן/סַאכְּנֶה,גר/גרה,سَاكِن/سَاكِنَة,לא,,שיעור 13,הצגה עצמית
-שַׁארֵע,רחוב,شَارِع,לא,,שיעור 13,הצגה עצמית
-רַקְם,מספר,رَقْم,לא,,שיעור 13,הצגה עצמית
-עַמַארַה,בניין,عِمَارَة,לא,,שיעור 13,הצגה עצמית
-פִי טַאבֵּק רַקְם,בקומה מספר,فِي طَابِق رَقْم,לא,,שיעור 13,הצגה עצמית
-לַחַאלִי,לבדי,لَحَالِي,לא,,שיעור 13,הצגה עצמית
-מַעַ,עם,مَعَ,לא,,שיעור 13,הצגה עצמית
-עֻמְרִי,גילי,عُمْرِي,לא,,שיעור 13,הצגה עצמית
-מִתְגַ'וֵּז,נשוי,مُتْجَوِّز,לא,,שיעור 13,הצגה עצמית
-עַזַבּ,רווק,عَزَب,לא,,שיעור 13,הצגה עצמית
-מְטַלַּק,גרוש,مُطَلَّق,לא,,שיעור 13,הצגה עצמית
-בַּחִבּ,אוהב/ת,بْحِبّ,לא,,שיעור 13,הצגה עצמית
-מַא בַּחִבּשׁ,אני לא אוהב/ת,مَا بْحِبِّشّ,לא,,שיעור 13,הצגה עצמית
-בִּס,חתול,بَسَّة,לא,,שיעור 13,הצגה עצמית
-אַנַא בַּשְׁתְעֵ'ל,אני עובד,أَنَا بِشْتَغِل,לא,,שיעור 13,הצגה עצמית
-שֻׁעְ'לִי,העבודה שלי,شُغْلِي,לא,,שיעור 13,הצגה עצמית
-עִנְדִי,יש לי,عِنْدِي,לא,,שיעור 13,הצגה עצמית
-מַפִשׁ עִנְדִי,אין לי,مَافِشّ عِنْدِي,לא,,שיעור 13,הצגה עצמית
-מִתְדַאיֵּק,מודאג,مُتْضَايِق,לא,,שיעור 13,הצגה עצמית
-עִנְדִי סְח'וּנֶה,יש לי חום,عِنْدِي سُخُونَة,לא,,שיעור 13,הצגה עצמית
-חַאסֵס,מרגיש,حَاسِس,לא,,שיעור 13,הצגה עצמית
-מֻרְתַאח,נח,مُرْتَاح,לא,,שיעור 13,הצגה עצמית
-עִיד מִילַאד,יום הולדת,عِيد مِيلَاد,לא,,שיעור 13,הצגה עצמית
-חַפְלֶה,מסיבה,حَفْلَة,לא,,שיעור 13,הצגה עצמית
-תַמַאם,בסדר/טוב,تَمَام,לא,"מילים נרדפות: מְנִיח, סְּכְוַיֵּס",שיעור 10,ניהול שיחה
-מְנִיח,בסדר/טוב,مْنِيح,לא,"מילים נרדפות: תַמַאם, סְּכְוַיֵּס",שיעור 10,ניהול שיחה
-סְּכְוַיֵּס,בסדר/טוב,سْكَوَيِّس,לא,"מילים נרדפות: תַמַאם, מְנִיח",שיעור 10,ניהול שיחה
-פִשׁ אַחְבַּאר,אין חדשות,فِشّ أَخْبَار,לא,מילה נרדפת: מַפִשׁ אַחְבַּאר,שיעור 10,ניהול שיחה
-מַפִשׁ אַחְבַּאר,אין חדשות,مَافِشّ أَخْبَار,לא,מילה נרדפת: פִשׁ אַחְבַּאר,שיעור 10,ניהול שיחה
-כֻּלְּשִׁי בְּחֵיר,הכל טוב,كُلْشِي بِخَيْر,לא,מילה נרדפת (תשובה קצרה): תַמַאם,שיעור 10,ניהול שיחה
-מַאשִׁי אלְחַאל,המצב טוב,مَاشِي الْحَال,לא,מילה נרדפת: מֻמְתַאז,שיעור 10,ניהול שיחה
-מֻמְתַאז,מצוין,مُمْتَاز,לא,מילה נרדפת: מַאשִׁי אלְחַאל,שיעור 10,ניהול שיחה
-שׁוּ אַחְבַּארַכּ/שׁוּ אַחְבַּארֵכּ?,מה החדשות שלך?,شُو أَخْبَارَكَ؟/شُو أَخْبَارِكِ؟,לא,,שיעור 10,ניהול שיחה
-אַב,אבא,أَب,לא,,שיעור 2,תעתיק האותיות בערבית
-בַּאב,דלת,بَاب,לא,,שיעור 2,תעתיק האותיות בערבית
-תוּת,תות,تُوت,לא,,שיעור 2,תעתיק האותיות בערבית
-תְרַאת',מורשת,تُرَاث,לא,,שיעור 2,תעתיק האותיות בערבית
-תַמְר,תמר,تَمْر,לא,,שיעור 2,תעתיק האותיות בערבית
-תַ'מַר,פרי,ثَمَر,לא,,שיעור 2,תעתיק האותיות בערבית
-גַ'מַל,גמל,جَمَل,לא,,שיעור 2,תעתיק האותיות בערבית
-חַבִּיבִּי,אהובי,حَبِيبِي,לא,,שיעור 2,תעתיק האותיות בערבית
-אַח',אח,أَخ,לא,,שיעור 2,תעתיק האותיות בערבית
-חַרְף - חֻרוּף,אות,حَرْف - حُرُوف,לא,,שיעור 2,תעתיק האותיות בערבית
-דַאר,בית,دَار,לא,,שיעור 2,תעתיק האותיות בערבית
-דַ'הַבּ,זהב,ذَهَب,לא,,שיעור 2,תעתיק האותיות בערבית
-רַאס,ראש,رَأْس,לא,,שיעור 2,תעתיק האותיות בערבית
-זֵית,שמן,زَيْت,לא,,שיעור 2,תעתיק האותיות בערבית
-סַמַא,שמיים,سَمَاء,לא,,שיעור 2,תעתיק האותיות בערבית
-שַׁמְס,שמש,شَمْس,לא,,שיעור 2,תעתיק האותיות בערבית
-סְבַּאח,בוקר,صَبَاح,לא,,שיעור 2,תעתיק האותיות בערבית
-רַכַּד,רץ,رَكَض,לא,,שיעור 2,תעתיק האותיות בערבית
-טַבַּאח',טבח,طَبَّاخ,לא,,שיעור 2,תעתיק האותיות בערבית
-עֵין,עין,عَيْن,לא,,שיעור 2,תעתיק האותיות בערבית
-עֻ'רְפָה,חדר,غُرْفَة,לא,,שיעור 2,תעתיק האותיות בערבית
-פִיל,פיל,فِيل,לא,,שיעור 2,תעתיק האותיות בערבית
-קַלְבּ,לב,قَلْب,לא,,שיעור 2,תעתיק האותיות בערבית
-כַּלְבּ,כלב,كَلْب,לא,,שיעור 2,תעתיק האותיות בערבית
-לֵיש,למה,لِيش,לא,,שיעור 2,תעתיק האותיות בערבית
-נְרוּח,אנחנו הולכים,نْرُوح,לא,,שיעור 2,תעתיק האותיות בערבית
-וַאלַה,באמת,وَاللّٰه,לא,,שיעור 2,תעתיק האותיות בערבית
-יַהוּדִי,יהודי,يَهُودِي,לא,,שיעור 2,תעתיק האותיות בערבית
-אַ(ל)סַּלַאם עַלֵיכּם,שלום,السَّلَام عَلَيْكُم,לא,,שיעור 6,הברכות חלק א'
-וּעַלֵיכּם (אל)סַּלַאם,שלום עליך/עליכם,وَعَلَيْكُم السَّلَام,לא,,שיעור 6,הברכות חלק א'
-אַהְלַא וּסַהְלַא,ברוך הבא,أَهْلًا وَسَهْلًا,לא,,שיעור 6,הברכות חלק א'
-אַהְלַא פִיכּ/אַהְלַא פִיכִּי,ברוך הבא,أَهْلًا فِيك/أَهْلًا فِيكِي,לא,,שיעור 6,הברכות חלק א'
-מַרְחַבַּא,שלום,مَرْحَبَا,לא,,שיעור 6,הברכות חלק א'
-מַרְחַבְּתֵין,שלום (פעמיים),مَرْحَبْتين,לא,,שיעור 6,הברכות חלק א'
-סַבַּאח (א)לְחֵ'יר,בוקר טוב,صَبَاح الْخَيْر,לא,,שיעור 6,הברכות חלק א'
-סַבַּאח (אל)נּוּר,בוקר אור,صَبَاح النُّور,לא,,שיעור 6,הברכות חלק א'
-מַסַאא (א)לְחֵ'יר,ערב טוב,مَسَاء الْخَيْر,לא,,שיעור 6,הברכות חלק א'
-מַסַאא (אל)נּוּר,ערב אור,مَسَاء النُّور,לא,,שיעור 6,הברכות חלק א'
-סַלַאמַאת,להתראות,سَلَامَات,לא,,שיעור 6,הברכות חלק א'
-מַע (אל)סַּלַאמֶה,להתראות,مَعَ السَّلَامَة,לא,,שיעור 6,הברכות חלק א'
-אִלַא (אל)לִּקַאא,להתראות,إِلَى اللِّقَاء,לא,,שיעור 6,הברכות חלק א'
-תְשַׁרַּפְנָא,נעים להכיר,تَشَرَّفْنَا,לא,,שיעור 6,הברכות חלק א'
-אַ(ל)שַּׁרַף אֵלִי,הכבוד שלי,الشَّرَف إِلِي,לא,,שיעור 6,הברכות חלק א'
-שֶׁכְּרַן,תודה,شُكْرًا,לא,,שיעור 6,הברכות חלק א'
-עַפְוַן,בבקשה,عَفْوًا,לא,,שיעור 6,הברכות חלק א'
-לַא שֻׁכְּר עַלַא וַאגֶ'ב,אין בעד מה,لا شُكر عَلَى وَاجِب,לא,,שיעור 6,הברכות חלק א'
-תְסְבַּחוּ עַ(א)לְחֵ'יר,שתתעוררו לטוב,تِصْبَحُوا عَلَى خَيْر,לא,,שיעור 6,הברכות חלק א'
-וּאַנְתֶ/וּאַנְתִי מִן אַהְלוּ,ואת/ה מהוריה/ממשפחתה הטובים,وَأَنْتَ/وَأَنْتِي مِن أَهْلُو,לא,,שיעור 6,הברכות חלק א'
-יַעְטִיכ/יַעְטִיכִי (א)לְעַאפְיֶה,יתן לך בריאות/כוח,يَعْطِيك/يَعْطِيكِي الْعَافِيَة,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יְעַאפִיכ/יְעַאפִיכִי,שאלוהים יברך אותך,اللّٰه يُعَافِيك/يُعَافِيكِي,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יִרְדַא עַלֵיכ/עַלֵיכִי,שאלוהים ירצה אותך,اللّٰه يِرْضَى عَلَيْك/عَلَيْكِي,לא,,שיעור 7,הברכות חלק ב'
-אֵלְחַמְדְלַה עַ(אל)סַּלַאמֶה,ברוך שובך בשלום,الْحَمْدُ لِلَّه عَالسَّلَامَة,לא,,שיעור 7,הברכות חלק ב'
-בַּארַכ אַלְלָה פִיכ/פִיכִי,שאלוהים יברך אותך,بَارَك اللّٰه فِيك/فِيكِي,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יִסְעֶדכ,שאלוהים ישמח אותך,اللّٰه يِسْعِدَك,לא,,שיעור 7,הברכות חלק ב'
-תִסְלַם,"תתברך, תהיה בריא",تِسْلَم,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יְסַלְּמכ,אלוהים ישמור אותך,اللّٰه يْسَلِّمَك,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יִחְפַזְ'כ,אלוהים ישמור עליך,اللّٰه يِحْفَظَك,לא,,שיעור 7,הברכות חלק ב'
-"רַבַּנא יִכַּרמכ, יִסְעֶדכ, יְחַ'לִּיכ/רַבַּנא יִכַּרמכ, יִסְעֶדכ, יְחַ'לִּיכִי","אלוהים יכבד אותך, יעזור לך, ישמור אותך",رَبِّنا يِكَرِّمَك، يِسْعِدَك، يِخَلِّيك/رَبِّنا يِكَرِّمَك، يِسْعِدَك، يِخَلِّيكِي,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יְחַ'לִּיכ/יְחַ'לִּיכִי,שאלוהים ישמור אותך,اللّٰه يِخَلِّيك/يِخَلِّيكِي,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יְחַ'לִּיכ וִיחַ'לִּי וּלַאדכ וּאַחְבַּאבכ/אַלְלָה יְחַ'לִּיכִי וִיחַ'לִּי וּלַאדכ וּאַחְבַּאבכ,אלוהים ישמור אותך ואת ילדייך ואהובייך,اللّٰه يِخَلِّيك ويخَلِّي وْلادَك وْأَحْبابَك/اللّٰه يِخَلِّيكِي ويخَلِّي وْلادَك وْأَحْبابَك,לא,,שיעור 7,הברכות חלק ב'
-נַעִימַן,"ברכות למי שהסתפר, התגלח או התרחץ",نَعِيمًا,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יִנְעַם עַלֵיכ/עַלֵיכִי,אלוהים ינעים אותך/יעשה איתך חסד,اللّٰه يِنْعَم عَلَيْك/عَلَيْكِي,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה מַעכ,שאלוהים יהיה איתך,اللّٰه مَعَك,לא,,שיעור 7,הברכות חלק ב'
-"מַע (אל)סַּלַאמֶה, אַלְלָה יְסַהֵּל אֻמוּרכ יַא רַבּ","להתראות, שאלוהים יקל את העניינים שלך",مَع السَّلَامَة، اللّٰه يِسَهِّل أُمورَك يا رَبّ,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יְטַוֵּל בְּעֻמרכ,שאלוהים יאריך ימיך,اللّٰه يِطَوِّل بْعُمرَك,לא,,שיעור 7,הברכות חלק ב'
-מַבּרוּכ,מזל טוב,مَبْروك,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יְבַּארֵכ פִיכ/פִיכִי,שאלוהים יברך אותך,اللّٰه يِبارِك فِيك/فِيكِي,לא,,שיעור 7,הברכות חלק ב'
-כֻּלּ עַאם וּאַנְתֶ בְּחֵ'יר/כֻּלּ עַאם וּאַנְתִי בְּחֵ'יר,כל שנה ואת/ה בטוב,كُلّ عام وأَنْتَ بْخَيْر/كُلّ عام وأَنْتِي بْخَيْر,לא,,שיעור 7,הברכות חלק ב'
-יִנְעַאד עַלֵיכּם בִּ(א)לְחֵ'יר וִּ(א)לְבַּרַכָּה,שתחזרו לשנה טובה ומבורכת,يِنْعاد عَلَيْكُم بِالْخَيْر والْبَرَكَة,לא,,שיעור 7,הברכות חלק ב'
-עַלֵינא וְעַלֵיכ יַא רַבּ/עַלֵינא וְעַלֵיכִי יַא רַבּ,עלינו ועלייך אלוהים,عَلَيْنا وَعَلَيْك يا رَبّ/عَلَيْنا وَعَلَيْكِي يا رَبّ,לא,,שיעור 7,הברכות חלק ב'
-יִסְלַמוּ אִידֵיכ/אִידֵיכִי,יבורכו ידייך,يِسْلَمُوا إيدَيك/إيدَيكِي,לא,,שיעור 7,הברכות חלק ב'
-וְאִידֵיכ/וְאִידֵיכִי,וידייך,وإيدَيك/وإيدَيكِي,לא,,שיעור 7,הברכות חלק ב'
-סַחָּה,לבריאות,صَحَّة,לא,,שיעור 7,הברכות חלק ב'
-סַחְתֵין,"בריאות (תשובה, פעמיים)",صَحْتين,לא,מילה נרדפת: עַלַא קַלְבַּכ,שיעור 7,הברכות חלק ב'
-עַלַא קַלְבַּכ,על הלב שלך (תשובה),عَلَى قَلْبَك,לא,מילה נרדפת: סַחְתֵין,שיעור 7,הברכות חלק ב'
-סַמַ אלְלָה עַלֵיכ/עַלֵיכִי,אלוהים ישמור עליך,سَمّ الله عَلَيْك/عَلَيْكِي,לא,,שיעור 7,הברכות חלק ב'
-אַלְלָה יִסְתֻרכ,אלוהים יגן עליך,اللّٰه يِسْتُرَك,לא,,שיעור 7,הברכות חלק ב'
-מַרְחַבַּא,שלום,مَرْحَبَا,לא,,שיעור 8,שיר הפגישה והברכה
-אַהְלַן,ברוך הבא,أَهْلًا,לא,,שיעור 8,שיר הפגישה והברכה
-אַנַא אִסְמִי,שמי הוא,أَنَا اسْمِي,לא,,שיעור 8,שיר הפגישה והברכה
-אַנַא בְּחֵ'יר,אני בטוב,أَنَا بِخَيْر,לא,,שיעור 8,שיר הפגישה והברכה
-שֶׁכְּרַן,תודה,شُكْرًا,לא,,שיעור 8,שיר הפגישה והברכה
-עַפְוַן,בבקשה,عَفْوًا,לא,,שיעור 8,שיר הפגישה והברכה
-שׁוּ אִסְמַכ?/שׁוּ אִסְמֵכ?,מה שמך? (לזכר/לנקבה),شو اسمَك؟/شو اسمِك؟,לא,,שיעור 8,שיר הפגישה והברכה
-אִחְנא בְּחֵ'יר,אנחנו בטוב,إحْنا بِخَيْر,לא,,שיעור 8,שיר הפגישה והברכה
-שׁוּ,מה,شو,לא,,שיעור 14,שיחת היכרות
-אִסְמַכ/אִסְמֵכ,שמך (זכר/נקבה),اسمَك/اسمِك,לא,,שיעור 14,שיחת היכרות
-בִּ(א)לְאַצְל,במקור,بِالْأَصْل,לא,,שיעור 14,שיחת היכרות
-עֻמְרַכ/עֻמְרֵכ,גילך (זכר/נקבה),عُمْرَك/عُمْرِك,לא,,שיעור 14,שיחת היכרות
-מִתְגַ'וֵּז/מִתְגַ'וְּזֶה,נשוי/ה,مِتْجَوِّز/مِتْجَوِّزَة,לא,,שיעור 14,שיחת היכרות
-בִּתְשְׁתְעֵ'ל/בִּתְשְׁתְעֵ'לִי,אתה/את עובד/ת,بِتْشْتَغَل/بِتْشْتَغَلي,לא,,שיעור 14,שיחת היכרות
-בִּתְסַאוִי,עושה,بِتْساوي,לא,,שיעור 14,שיחת היכרות
-בִּתְחִבּ/בִּתְחִבִּי,את/ה אוהב/ת,بِتْحِبّ/بِتْحِبّي,לא,,שיעור 14,שיחת היכרות
-תַאכֻּל/תַאכְּלִי,אוכל/ת,تاكل/تاكلي,לא,,שיעור 14,שיחת היכרות
-</script>
+<div class="progress" id="progress"></div>
 
 <script>
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRS4HF5B78cLsLE-lzAuJoCfImLasfQGLvo9TXPWNhCpwLW9uqgEtwmhMXh8cdUAqpvblg8pQhas3MG/pub?output=csv";
-const LESSON_LABELS = {
-  "שיעור 2": "שיעור 2 – תעתיק האותיות בערבית",
-  "שיעור 6": "שיעור 6 – הברכות חלק א'",
-  "שיעור 7": "שיעור 7 – הברכות חלק ב'",
-  "שיעור 8": "שיעור 8 – שיר הפגישה והברכה",
-  "שיעור 9": "שיעור 9 – כינויי כבוד",
-  "שיעור 10": "שיעור 10 – ניהול שיחה",
-  "שיעור 11": "שיעור 11 – מצבי רוח",
-  "שיעור 12": "שיעור 12 – מילות שאלה",
-  "שיעור 13": "שיעור 13 – הצגה עצמית",
-  "שיעור 14": "שיעור 14 – שיחת היכרות"
-};
+const ALL = [
+  // שיעור 9
+  {ar:"יַאאַמִיר/אַמִירַה", arabic:"يا أمير / أميرة", he:"נסיך/נסיכה", lesson:"שיעור 9"},
+  {ar:"יַאחַבִּיבִּי/חַבִּיבְּתִי", arabic:"يا حبيبي / حبيبتي", he:"אהובי/אהובתי", lesson:"שיעור 9"},
+  {ar:"יַאעַזִיזִי/עַזִיזְתִי", arabic:"يا عزيزي / عزيزتي", he:"יקירי/יקירתי", lesson:"שיעור 9"},
+  {ar:"יַאזַלַמֶה", arabic:"يا زلمة", he:"חבר (משלב נמוך, בשיחה)", lesson:"שיעור 9"},
+  {ar:"יַאאַח'וּי/יַאחְ'תִי", arabic:"يا أخوي / يا أختي", he:"אחי/אחותי", lesson:"שיעור 9"},
+  {ar:"יַאסַאחְבִּי/סַאחִבְּתִי", arabic:"يا صاحبي / صاحبتي", he:"חבר/חברה", lesson:"שיעור 9"},
+  {ar:"יַאעַמִי/חַ'אלִי", arabic:"يا عمي / خالي", he:"דוד/דודה (אדם קרוב)", lesson:"שיעור 9"},
+  {ar:"יַאוּעַם/עַמַּה", arabic:"يا وعمو / عمة", he:"אדון/גברת מבוגר/ת", lesson:"שיעור 9"},
+  {ar:"יַאמְעַלֵּם/מְעַלְּמֶה", arabic:"يا معلم / معلمة", he:"מורה/גברת (אדם לא מוכר)", lesson:"שיעור 9"},
+  {ar:"יַאאֻסְתַאז/אֻסְתַאזֵה", arabic:"يا أستاذ / أستاذة", he:"מר/גברת", lesson:"שיעור 9"},
+  {ar:"יַאסַיִּד/סַיִּדַה", arabic:"يا سيد / سيدة", he:"אדון/גברת", lesson:"שיעור 9"},
+  {ar:"יַאמֻחְתַרַם/מֻחְתַרְמֶה", arabic:"يا محترم / محترمة", he:"מכובד/מכובדת", lesson:"שיעור 9"},
+  {ar:"יַאחַאג'/חַאגֶּה", arabic:"يا حاج / حاجة", he:"עולי רגל / מבוגרים (מעל גיל 50)", lesson:"שיעור 9"},
+  {ar:"יַאחַדְרַת אל...", arabic:"يا حضرة ال...", he:"מכובד / בעל תפקיד", lesson:"שיעור 9"},
+  {ar:"יַאגַ'לַאלַת אלְמַלִכּ", arabic:"يا جلالة الملك", he:"הוד מעלת המלך", lesson:"שיעור 9"},
+  // שיעור 10
+  {ar:"כִּיף חַאלַכּ/חַאלֵכּ?", arabic:"كيف حالك؟", he:"איך אתה/את?", lesson:"שיעור 10"},
+  {ar:"כִּיף אלְחַאל?", arabic:"كيف الحال؟", he:"איך המצב?", lesson:"שיעור 10"},
+  {ar:"כִּיפַכּ/כִּיפֵכּ?", arabic:"كيفك؟", he:"איך אתה/את? (קצר)", lesson:"שיעור 10"},
+  {ar:"כִּיף אלְאֻמוּר?", arabic:"كيف الأمور؟", he:"איך העניינים?", lesson:"שיעור 10"},
+  {ar:"שׁוּ אלְוַדְע?", arabic:"شو الوضع؟", he:"מה המצב?", lesson:"שיעור 10"},
+  {ar:"כִּיף סַחְתַּכּ/סַחְתֵּכּ?", arabic:"كيف صحتك؟", he:"איך הבריאות שלך?", lesson:"שיעור 10"},
+  {ar:"אֵלְחַמְדֻלִלַּה", arabic:"الحمد لله", he:"תודה לאל", lesson:"שיעור 10"},
+  {ar:"תַמַאם/מְנִיח/סְּכְוַיֵּס", arabic:"تمام / منيح / سكويس", he:"בסדר/טוב", lesson:"שיעור 10"},
+  {ar:"מַאשִׁי אלְחַאל/מֻמְתַאז", arabic:"ماشي الحال / ممتاز", he:"המצב טוב/מצוין", lesson:"שיעור 10"},
+  {ar:"כֻּלְּשִׁי בְּחֵיר/תַמַאם", arabic:"كلشي بخير / تمام", he:"הכל טוב/הכל בסדר", lesson:"שיעור 10"},
+  {ar:"שׁוּ אלְאַחְבַּאר?", arabic:"شو الأخبار؟", he:"מה החדשות?", lesson:"שיעור 10"},
+  {ar:"שׁוּ אַחְבַּארַכּ/אַחְבַּארֵכּ?", arabic:"شو أخبارك؟", he:"מה החדשות שלך?", lesson:"שיעור 10"},
+  {ar:"פִיה כְּתִיר אַחְבַּאר", arabic:"فيه كتير أخبار", he:"יש הרבה חדשות", lesson:"שיעור 10"},
+  {ar:"פִשׁ/מַפִשׁ אַחְבַּאר", arabic:"فش / مافش أخبار", he:"אין חדשות", lesson:"שיעור 10"},
+  {ar:"וֵין אִנְתֶ/אִנְתִי?", arabic:"وين إنت / إنتي؟", he:"איפה אתה/את?", lesson:"שיעור 10"},
+  {ar:"וֵינַכּ/וֵינֵכּ?", arabic:"وينك؟", he:"איפה אתה/את? (קצר)", lesson:"שיעור 10"},
+  {ar:"שׁוּ כְּבִּדַכּ/כְּבִּדֵכּ?", arabic:"شو بدك؟", he:"מה אתה/את רוצה?", lesson:"שיעור 10"},
+  {ar:"יְבִּדִי אַתְעַלַּ עַרַבִּי", arabic:"بدي أتعلم عربي", he:"אני רוצה ללמוד ערבית", lesson:"שיעור 10"},
+  {ar:"מַא יְבִּדִי וַלַא אִישִׁי", arabic:"ما بدي ولا إشي", he:"אני לא רוצה שום דבר", lesson:"שיעור 10"},
+  {ar:"שׁוּ בְּתִסַּוִי?", arabic:"شو بتساوي؟", he:"מה אתה/את עושה?", lesson:"שיעור 10"},
+  {ar:"שׁוּ סַּוֵיתּ?", arabic:"شو سويت؟", he:"מה עשית?", lesson:"שיעור 10"},
+  {ar:"שׁוּ סַאר?", arabic:"شو صار؟", he:"מה קרה?", lesson:"שיעור 10"},
+  {ar:"מַא סַארְשִׁי", arabic:"ما صارشي", he:"לא קרה כלום", lesson:"שיעור 10"},
+  {ar:"וַלַד/וּלַאד", arabic:"ولد / ولاد", he:"ילד/ילדים", lesson:"שיעור 10"},
+  {ar:"מַרַה", arabic:"مرة", he:"אישה", lesson:"שיעור 10"},
+  {ar:"ג'וֹז", arabic:"جوز", he:"בעל", lesson:"שיעור 10"},
+  {ar:"מַטְעַם", arabic:"مطعم", he:"מסעדה", lesson:"שיעור 10"},
+  {ar:"בַּחְר", arabic:"بحر", he:"ים", lesson:"שיעור 10"},
+  {ar:"גַ'אר/גִ'ירַאן", arabic:"جار / جيران", he:"שכן/שכנים", lesson:"שיעור 10"},
+  {ar:"וַזִיפֵה/וַזַאאֵף", arabic:"وظيفة / وظائف", he:"מטלות, שיעורי בית", lesson:"שיעור 10"},
+  {ar:"מֻשְׁכִּלֵה/מַשַׁאכֵּל", arabic:"مشكلة / مشاكل", he:"בעיה/בעיות", lesson:"שיעור 10"},
+  {ar:"דַרְס", arabic:"درس", he:"שיעור", lesson:"שיעור 10"},
+  {ar:"סַעְבּ", arabic:"صعب", he:"קשה", lesson:"שיעור 10"},
+  // שיעור 11
+  {ar:"פַרְחַאן", arabic:"فرحان", he:"שמח", lesson:"שיעור 11"},
+  {ar:"אַהְבַּל", arabic:"أهبل", he:"מטופש", lesson:"שיעור 11"},
+  {ar:"עַיַאן/מַרִידֿ", arabic:"عيان / مريض", he:"חולה", lesson:"שיעור 11"},
+  {ar:"נֻסֿ בִּנֻסֿ", arabic:"نص بنص", he:"ככה ככה", lesson:"שיעור 11"},
+  {ar:"בַּאכִּי", arabic:"باكي", he:"בוכה", lesson:"שיעור 11"},
+  {ar:"מִיֶה בִּלְמִיֶה", arabic:"مية بالمية", he:"מצוין", lesson:"שיעור 11"},
+  {ar:"מֻזְעַג'", arabic:"مزعوج", he:"עצבני", lesson:"שיעור 11"},
+  {ar:"תַעְבַּאן", arabic:"تعبان", he:"עייף", lesson:"שיעור 11"},
+  {ar:"מַבְּסוּט", arabic:"مبسوط", he:"מרוצה", lesson:"שיעור 11"},
+  {ar:"מַאשִׁי", arabic:"ماشي", he:"בסדר", lesson:"שיעור 11"},
+  {ar:"חַזִין", arabic:"حزين", he:"עצוב", lesson:"שיעור 11"},
+  {ar:"מְנִיח", arabic:"منيح", he:"טוב", lesson:"שיעור 11"},
+  {ar:"זַעְלַאן", arabic:"زعلان", he:"כועס", lesson:"שיעור 11"},
+  {ar:"ג'וּעַאן", arabic:"جوعان", he:"רעב", lesson:"שיעור 11"},
+  {ar:"נַעְסַאן", arabic:"ناعسان", he:"מנומנם", lesson:"שיעור 11"},
+  // שיעור 12
+  {ar:"מִין?", arabic:"مين؟", he:"מי?", lesson:"שיעור 12"},
+  {ar:"מַעַ מִין?", arabic:"مع مين؟", he:"עם מי?", lesson:"שיעור 12"},
+  {ar:"לַעִנְד מִין?", arabic:"لعند مين؟", he:"אצל מי?", lesson:"שיעור 12"},
+  {ar:"שׁוּ?", arabic:"شو؟", he:"מה?", lesson:"שיעור 12"},
+  {ar:"אֵמְתַא?", arabic:"إيمتى؟", he:"מתי?", lesson:"שיעור 12"},
+  {ar:"וֵין?", arabic:"وين؟", he:"איפה?", lesson:"שיעור 12"},
+  {ar:"מִן וֵין?", arabic:"من وين؟", he:"מאיפה?", lesson:"שיעור 12"},
+  {ar:"לַוֵין?", arabic:"لوين؟", he:"לאן?", lesson:"שיעור 12"},
+  {ar:"כִּיף?", arabic:"كيف؟", he:"איך?", lesson:"שיעור 12"},
+  {ar:"לֵישׁ?", arabic:"ليش؟", he:"למה?", lesson:"שיעור 12"},
+  {ar:"לַשׁוּ?", arabic:"لشو؟", he:"בשביל מה?", lesson:"שיעור 12"},
+  {ar:"קַדֵישׁ?", arabic:"قديش؟", he:"כמה? (לא ספירים)", lesson:"שיעור 12"},
+  {ar:"אַכַּם", arabic:"أكم؟", he:"כמה? (ספירים)", lesson:"שיעור 12"},
+  {ar:"אַי?/אַנוּ?", arabic:"أي؟ / أنو؟", he:"איזה?", lesson:"שיעור 12"},
+  // שיעור 13
+  {ar:"אִסְמִי", arabic:"اسمي", he:"שמי", lesson:"שיעור 13"},
+  {ar:"בִּסַמּוּנִי", arabic:"بسمّوني", he:"קוראים לי", lesson:"שיעור 13"},
+  {ar:"עֵילֶה", arabic:"عيلة", he:"משפחה", lesson:"שיעור 13"},
+  {ar:"סַאכֵּן/סַאכְּנֶה", arabic:"ساكن / ساكنة", he:"גר/גרה", lesson:"שיעור 13"},
+  {ar:"שַׁארֵע", arabic:"شارع", he:"רחוב", lesson:"שיעור 13"},
+  {ar:"רַקְם", arabic:"رقم", he:"מספר", lesson:"שיעור 13"},
+  {ar:"עַמַארַה", arabic:"عمارة", he:"בניין", lesson:"שיעור 13"},
+  {ar:"פִי טַאבֵּק רַקְם", arabic:"في طابق رقم", he:"בקומה מספר", lesson:"שיעור 13"},
+  {ar:"לַחַאלִי", arabic:"لحالي", he:"לבדי", lesson:"שיעור 13"},
+  {ar:"מַעַ", arabic:"مع", he:"עם", lesson:"שיעור 13"},
+  {ar:"עֻמְרִי", arabic:"عمري", he:"גילי", lesson:"שיעור 13"},
+  {ar:"מִתְגַ'וֵּז", arabic:"متجوز", he:"נשוי", lesson:"שיעור 13"},
+  {ar:"עַזַבּ", arabic:"عزب", he:"רווק", lesson:"שיעור 13"},
+  {ar:"מְטַלַּק", arabic:"مطلق", he:"גרוש", lesson:"שיעור 13"},
+  {ar:"בַּחִבּ", arabic:"بحب", he:"אוהב/ת", lesson:"שיעור 13"},
+  {ar:"מַא בַּחִבּשׁ", arabic:"ما بحبش", he:"אני לא אוהב/ת", lesson:"שיעור 13"},
+  {ar:"בִּס", arabic:"بسة", he:"חתול", lesson:"שיעור 13"},
+  {ar:"אַנַא בַּשְׁתְעֵ'ל", arabic:"أنا بشتغل", he:"אני עובד", lesson:"שיעור 13"},
+  {ar:"שֻׁעְ'לִי", arabic:"شغلي", he:"העבודה שלי", lesson:"שיעור 13"},
+  {ar:"עִנְדִי", arabic:"عندي", he:"יש לי", lesson:"שיעור 13"},
+  {ar:"מַפִשׁ עִנְדִי", arabic:"مافش عندي", he:"אין לי", lesson:"שיעור 13"},
+  {ar:"מִתְדַאיֵּק", arabic:"متضايق", he:"מודאג", lesson:"שיעור 13"},
+  {ar:"עִנְדִי סְח'וּנֶה", arabic:"عندي سخونة", he:"יש לי חום", lesson:"שיעור 13"},
+  {ar:"חַאסֵס", arabic:"حاسس", he:"מרגיש", lesson:"שיעור 13"},
+  {ar:"מֻרְתַאח", arabic:"مرتاح", he:"נח", lesson:"שיעור 13"},
+  {ar:"עִיד מִילַאד", arabic:"عيد ميلاد", he:"יום הולדת", lesson:"שיעור 13"},
+  {ar:"חַפְלֶה", arabic:"حفلة", he:"מסיבה", lesson:"שיעור 13"},
+];
 
-let ALL = [], deck = [], idx = 0, dir = 'ah', lessons = [], enabled = new Set();
-let saidFilter = 'all', knownFilter = 'all';
-var knownIds = new Set();
+let deck = [], idx = 0, dir = 'ah';
 
-/* ── theme ────────────────────────────────── */
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  try { localStorage.setItem('fc-theme', t); } catch (e) {}
-  document.querySelector('meta[name=theme-color]').setAttribute(
-    'content', t === 'dark' ? '#0b0b0f' : '#f4f4f5');
-}
-function toggleTheme() {
-  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-}
-(function () {
-  let t = null;
-  try { t = localStorage.getItem('fc-theme'); } catch (e) {}
-  if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  applyTheme(t);
-})();
-
-/* ── CSV parsing ──────────────────────────── */
-function parseCSV(text) {
-  const rows = [];
-  let row = [], field = '', q = false;
-  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (q) {
-      if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
-      else field += ch;
-    } else if (ch === '"') q = true;
-    else if (ch === ',') { row.push(field); field = ''; }
-    else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
-    else field += ch;
-  }
-  if (field.length || row.length) { row.push(field); rows.push(row); }
-  return rows.filter(function (r) { return r.some(function (c) { return c.trim(); }); });
-}
-
-function rowsToCards(rows) {
-  if (!rows.length) return [];
-  const head = rows[0].map(function (h) { return h.replace(/^\uFEFF/, '').trim(); });
-  const col = {};
-  head.forEach(function (h, i) { col[h] = i; });
-  const out = [];
-  for (let r = 1; r < rows.length; r++) {
-    const g = function (name) { const i = col[name]; return i === undefined ? '' : (rows[r][i] || '').trim(); };
-    const tr = g('תעתיק'), he = g('תרגום'), ar = g('ערבית');
-    if (!tr && !ar) continue;
-    const said = g('נאמר_בשיעור') === 'כן';
-    const note = g('הערות');
-    const lesson = g('שיעור');
-    const wordCount = he.split(/\s+/).filter(Boolean).length;
-    const isPair = (tr.split('/').length - 1) === 1 && (ar.split('/').length - 1) === 1;
-    const id = lesson + '|' + tr;
-    if (isPair) {
-      const t = tr.split('/'), a = ar.split('/');
-      out.push({ id: id, isGenderPair: true, arM: t[0].trim(), arF: t[1].trim(),
-                 arabicM: a[0].trim(), arabicF: a[1].trim(),
-                 he: he, note: note, said: said, lesson: lesson, wordCount: wordCount });
-    } else {
-      out.push({ id: id, isGenderPair: false, ar: tr, arabic: ar,
-                 he: he, note: note, said: said, lesson: lesson, wordCount: wordCount });
-    }
-  }
-  return out;
-}
-
-/* ── speech ───────────────────────────────── */
-function speakText(text) {
-  if (!text) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ar-SA'; u.rate = 0.8;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
-}
-
-/* ── rendering ────────────────────────────── */
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function genderHTML(c) {
-  function rowHTML(label, tr, ab, key) {
-    return '<div class="gender-row">' +
-      '<span class="gender-label">' + label + '</span>' +
-      '<div class="word-block">' +
-        '<div class="transliteration">' + esc(tr) + '</div>' +
-        '<div class="arabic-script">' + esc(ab) + '</div>' +
-      '</div>' +
-      '<button class="sound-btn-sm" aria-label="השמעה" ' +
-        'onclick="event.stopPropagation();speakText(deck[idx].' + key + ')">🔊</button>' +
-    '</div>';
-  }
-  return '<div class="gender-pair">' +
-    rowHTML('זכר', c.arM, c.arabicM, 'arabicM') +
-    '<div class="gender-divider"></div>' +
-    rowHTML('נקבה', c.arF, c.arabicF, 'arabicF') +
-  '</div>';
-}
-
-function arabicHTML(c) {
-  return '<div class="transliteration">' + esc(c.ar) + '</div>' +
-         '<div class="arabic-script">' + esc(c.arabic) + '</div>' +
-         '<button class="sound-btn" aria-label="השמעה" ' +
-           'onclick="event.stopPropagation();speakText(deck[idx].arabic)">🔊</button>';
-}
-
-function hebrewHTML(c) {
-  return '<div class="hebrew-text">' + esc(c.he) + '</div>' +
-         (c.note ? '<div class="note">' + esc(c.note) + '</div>' : '');
-}
-
-function show() {
-  const fc = document.getElementById('frontContent');
-  const bc = document.getElementById('backContent');
-  const wrap = document.getElementById('cardWrap');
-  wrap.classList.remove('flipped');
-
-  if (!deck.length) {
-    document.getElementById('lessonTag').textContent = '';
-    document.getElementById('badgeEl').style.display = 'none';
-    fc.innerHTML = '<div class="empty">אין כרטיסיות בסינון הנוכחי</div>';
-    bc.innerHTML = '';
-    document.getElementById('counter').textContent = '0 / 0';
-    document.getElementById('progressFill').style.width = '0%';
-    return;
-  }
-
-  const c = deck[idx];
-  document.getElementById('lessonTag').textContent = LESSON_LABELS[c.lesson] || c.lesson;
-  document.getElementById('badgeEl').style.display = c.said ? '' : 'none';
-  const isKnown = knownIds.has(c.id);
-  const kb = document.getElementById('knowBtn');
-  kb.classList.toggle('on', isKnown);
-  kb.querySelector('.chk').textContent = isKnown ? '🎉' : '✓';
-
-  const arSide = c.isGenderPair ? genderHTML(c) : arabicHTML(c);
-  if (dir === 'ah') { fc.innerHTML = arSide;      bc.innerHTML = hebrewHTML(c); }
-  else              { fc.innerHTML = hebrewHTML(c); bc.innerHTML = arSide; }
-
-  requestAnimationFrame(function () {
-    ['cardInner', 'cardWrap'].forEach(function (id) {
-      document.getElementById(id).style.minHeight = '';
-    });
-    document.querySelectorAll('.card-face').forEach(function (f) { f.style.minHeight = ''; });
-    const h = Math.max(
-      document.getElementById('cardFront').scrollHeight,
-      document.getElementById('cardBack').scrollHeight, 340) + 'px';
-    document.getElementById('cardInner').style.minHeight = h;
-    document.getElementById('cardWrap').style.minHeight = h;
-    document.querySelectorAll('.card-face').forEach(function (f) { f.style.minHeight = h; });
-  });
-
-  document.getElementById('counter').textContent = (idx + 1) + ' / ' + deck.length;
-  document.getElementById('progressFill').style.width =
-    ((idx + 1) / deck.length * 100).toFixed(1) + '%';
-}
-
-function flip()  { document.getElementById('cardWrap').classList.toggle('flipped'); }
-function move(n) { if (!deck.length) return; idx = (idx + n + deck.length) % deck.length; show(); }
-
-function playSparkle() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [1400, 1760, 2093, 2637].forEach(function (freq, i) {
-      const t = ctx.currentTime + i * 0.045;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, t);
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.1, t + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(t);
-      osc.stop(t + 0.2);
-    });
-    setTimeout(function () { ctx.close(); }, 500);
-  } catch (e) {}
-}
-
-function burstConfetti(x, y) {
-  const colors = ['#4f46e5', '#6366f1', '#059669', '#e11d48', '#f59e0b'];
-  for (let i = 0; i < 22; i++) {
-    const el = document.createElement('span');
-    el.className = 'confetti-piece';
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    el.style.background = colors[Math.floor(Math.random() * colors.length)];
-    el.style.animationDelay = (Math.random() * 100) + 'ms';
-    el.style.setProperty('--dx', (Math.random() * 180 - 90) + 'px');
-    document.body.appendChild(el);
-    setTimeout(function () { el.remove(); }, 1300);
-  }
-}
-
-async function markKnown() {
-  if (!deck.length || typeof toggleKnown !== 'function') return;
-  const nowKnown = await toggleKnown(deck[idx].id);
-  if (nowKnown === true) {
-    const rect = document.getElementById('knowBtn').getBoundingClientRect();
-    burstConfetti(rect.left + rect.width / 2, rect.top);
-    playSparkle();
-    setTimeout(function () { move(1); }, 480);
-  }
-}
-
-function shuffle() {
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const t = deck[i]; deck[i] = deck[j]; deck[j] = t;
-  }
-  idx = 0; show();
+function rebuild() {
+  const checked = [...document.querySelectorAll('.filter input[type=checkbox]:checked')].map(el => el.dataset.lesson);
+  deck = ALL.filter(c => checked.includes(c.lesson));
+  shuffle();
 }
 
 function setDir(d) {
   dir = d;
-  document.getElementById('btnAH').classList.toggle('on', d === 'ah');
-  document.getElementById('btnHA').classList.toggle('on', d === 'ha');
+  document.getElementById('btnAH').classList.toggle('active', d==='ah');
+  document.getElementById('btnHA').classList.toggle('active', d==='ha');
   show();
 }
 
-function renderChips() {
-  const box = document.getElementById('chips');
-  box.innerHTML = '';
-  lessons.forEach(function (ls) {
-    const el = document.createElement('label');
-    el.className = 'chip on';
-    el.textContent = LESSON_LABELS[ls] || ls;
-    el.onclick = function () {
-      if (enabled.has(ls)) { enabled.delete(ls); el.classList.remove('on'); }
-      else { enabled.add(ls); el.classList.add('on'); }
-      rebuild();
-    };
-    box.appendChild(el);
-  });
+function shuffle() {
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+  idx=0; show();
 }
 
-function setSaidFilter(v) {
-  saidFilter = v;
-  document.querySelectorAll('#saidSeg button').forEach(function (b) {
-    b.classList.toggle('on', b.dataset.v === v);
-  });
-  rebuild();
+function flip() {
+  document.getElementById('cardWrap').classList.toggle('flipped');
 }
 
-function setKnownFilter(v) {
-  knownFilter = v;
-  document.querySelectorAll('#knownSeg button').forEach(function (b) {
-    b.classList.toggle('on', b.dataset.v === v);
-  });
-  rebuild();
-}
-
-function rebuild() {
-  deck = ALL.filter(function (c) {
-    if (!enabled.has(c.lesson)) return false;
-    if (saidFilter === 'said' && !c.said) return false;
-    if (saidFilter === 'not'  && c.said) return false;
-    const known = knownIds.has(c.id);
-    if (knownFilter === 'known' && !known) return false;
-    if (knownFilter === 'not'   && known) return false;
-    return true;
-  });
-  shuffle();
-}
-
-function loadCards(cards, source) {
-  ALL = cards;
-  lessons = [];
-  ALL.forEach(function (c) { if (lessons.indexOf(c.lesson) === -1) lessons.push(c.lesson); });
-  enabled = new Set(lessons);
-  renderChips();
-  rebuild();
-  document.getElementById('srcTag').textContent = '· ' + ALL.length + ' מילים';
-  document.getElementById('status').textContent = source;
-}
-
-/* ── boot ─────────────────────────────────── */
-function bootFallback(msg) {
-  loadCards(rowsToCards(parseCSV(document.getElementById('fallbackCsv').textContent)), msg);
-}
-
-(function boot() {
-  bootFallback('');
-  if (!SHEET_CSV_URL) return;
-  document.getElementById('status').textContent = 'מסנכרן מגוגל שיטס…';
-  fetch(SHEET_CSV_URL + (SHEET_CSV_URL.indexOf('?') > -1 ? '&' : '?') + 'cb=' + Date.now())
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-    .then(function (txt) {
-      const cards = rowsToCards(parseCSV(txt));
-      if (!cards.length) throw new Error('empty sheet');
-      loadCards(cards, 'מסונכרן מגוגל שיטס ✓');
-      setTimeout(function () { document.getElementById('status').textContent = ''; }, 2500);
-    })
-    .catch(function () {
-      document.getElementById('status').textContent = 'לא הצלחתי לטעון מגוגל שיטס — מציג גרסה מקומית';
-    });
-})();
-
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'ArrowLeft')  move(1);
-  if (e.key === 'ArrowRight') move(-1);
-  if (e.key === ' ') { e.preventDefault(); flip(); }
-});
-</script>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, arrayUnion, arrayRemove }
-  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-const app = initializeApp({"apiKey": "AIzaSyCNGYq4rLwx8h2ffO4n-AxJBlpaW1D1fhs", "authDomain": "danshi-83fe9.firebaseapp.com", "projectId": "danshi-83fe9", "storageBucket": "danshi-83fe9.firebasestorage.app", "messagingSenderId": "811151615732", "appId": "1:811151615732:web:5b0210ad256a35236460a1", "measurementId": "G-Z2RJ53RWYY"});
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-let currentUser = null;
-
-window.signIn = function () {
-  signInWithPopup(auth, provider).catch(function (e) { alert('שגיאת התחברות: ' + e.message); });
-};
-window.signOutUser = function () { signOut(auth); };
-
-async function loadKnown(uid) {
-  const snap = await getDoc(doc(db, 'users', uid));
-  knownIds = new Set(snap.exists() ? (snap.data().known || []) : []);
-  if (typeof rebuild === 'function') rebuild();
-  if (typeof show === 'function') show();
-}
-
-window.toggleKnown = async function (id) {
-  if (!id) return null;
-  if (!currentUser) { window.signIn(); return null; }
-  const ref = doc(db, 'users', currentUser.uid);
-  let nowKnown;
-  if (knownIds.has(id)) {
-    knownIds.delete(id);
-    nowKnown = false;
-    await setDoc(ref, { known: arrayRemove(id) }, { merge: true });
+function show() {
+  if(!deck.length) return;
+  const c = deck[idx];
+  document.getElementById('cardWrap').classList.remove('flipped');
+  document.getElementById('lesson').textContent = c.lesson;
+  if(dir==='ah'){
+    document.getElementById('front').textContent = c.arabic;
+    document.getElementById('translit').textContent = c.ar;
+    document.getElementById('back').textContent = c.he;
+    document.getElementById('soundBtn').style.display = 'block';
+    document.getElementById('soundBtnBack').style.display = 'none';
   } else {
-    knownIds.add(id);
-    nowKnown = true;
-    await setDoc(ref, { known: arrayUnion(id) }, { merge: true });
+    document.getElementById('front').textContent = c.he;
+    document.getElementById('translit').textContent = '';
+    document.getElementById('back').textContent = c.arabic;
+    document.getElementById('soundBtn').style.display = 'none';
+    document.getElementById('soundBtnBack').style.display = 'block';
   }
-  if (typeof show === 'function') show();
-  return nowKnown;
-};
+  document.getElementById('progress').textContent = `${idx+1} / ${deck.length}`;
+}
 
-onAuthStateChanged(auth, function (user) {
-  currentUser = user;
-  const authBtn = document.getElementById('authBtn');
-  const userChip = document.getElementById('userChip');
-  const authAvatar = document.getElementById('authAvatar');
-  const authName = document.getElementById('authName');
-  if (user) {
-    authBtn.style.display = 'none';
-    userChip.style.display = '';
-    authAvatar.src = user.photoURL || '';
-    authName.textContent = user.displayName || user.email || '';
-    loadKnown(user.uid);
-  } else {
-    authBtn.style.display = '';
-    userChip.style.display = 'none';
-    authAvatar.style.display = 'none';
-    knownIds = new Set();
-    if (typeof rebuild === 'function') rebuild();
-    if (typeof show === 'function') show();
-  }
-});
+function move(n) {
+  idx = (idx+n+deck.length)%deck.length;
+  show();
+}
+
+function speak() {
+  const text = deck[idx].arabic;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ar';
+  u.rate = 0.85;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+function speakBack() {
+  const text = deck[idx].arabic;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ar';
+  u.rate = 0.85;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+rebuild();
 </script>
 </body>
 </html>
