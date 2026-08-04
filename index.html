@@ -23,6 +23,7 @@
   --accent-2:  #6366f1;
   --accent-sf: #eef2ff;
   --emerald:   #059669;
+  --amber:     #b45309;
   --rose:      #e11d48;
   --shadow-1:  0 1px 2px rgba(24,24,27,.04), 0 4px 12px rgba(24,24,27,.05), 0 16px 40px rgba(24,24,27,.06);
   --shadow-2:  0 2px 4px rgba(24,24,27,.05), 0 8px 20px rgba(24,24,27,.07), 0 24px 60px rgba(79,70,229,.10);
@@ -42,6 +43,7 @@ html[data-theme="dark"] {
   --accent-2:  #a5b4fc;
   --accent-sf: #1e1b3a;
   --emerald:   #34d399;
+  --amber:     #fbbf24;
   --rose:      #fb7185;
   --shadow-1:  0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   --shadow-2:  0 2px 6px rgba(0,0,0,.45), 0 12px 32px rgba(0,0,0,.4), 0 24px 60px rgba(129,140,248,.12);
@@ -133,16 +135,52 @@ header {
 }
 
 /* ── controls ─────────────────────────────── */
-.controls { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.controls { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
 
-.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+/* label sits beside the control, not above it — saves a row per filter */
+.filter-row { display: flex; align-items: center; gap: 8px; }
+.filter-row > .filter-label {
+  flex: 0 0 52px; margin: 0; text-align: right;
+  font-size: .66rem; line-height: 1.2; color: var(--muted);
+}
+.filter-row > .segmented { flex: 1; min-width: 0; }
+
+/* collapsible filter panel — keeps the card near the top of the screen */
+.filter-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; min-height: 38px; padding: 6px 14px;
+  border-radius: 11px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-2); cursor: pointer;
+  font-family: inherit; font-size: .72rem; font-weight: 500;
+  transition: all .18s var(--ease);
+}
+.filter-toggle:active { transform: translateY(2px); }
+.filter-toggle .chev { transition: transform .22s var(--ease); font-size: .65rem; }
+.filter-toggle.open .chev { transform: rotate(180deg); }
+.filter-toggle .fsum { color: var(--muted); font-weight: 400; }
+.filter-panel { display: none; flex-direction: column; gap: 7px; }
+.filter-panel.open { display: flex; }
+
+.search-box {
+  width: 100%; height: 40px; padding: 0 14px; border-radius: 11px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font-family: inherit;
+  font-size: 16px; /* must stay >=16px: prevents iOS auto-zoom on focus */
+  transition: all .18s var(--ease);
+}
+.search-box::placeholder { color: var(--muted); }
+.search-box:focus { outline: none; border-color: var(--accent); }
+
+.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
 .chip {
-  min-height: 44px;
-  font-size: .72rem; font-weight: 500; line-height: 1.35;
-  padding: 8px 6px; border-radius: 12px;
+  min-height: 38px;
+  font-size: .67rem; font-weight: 500; line-height: 1.3;
+  padding: 5px 5px; border-radius: 11px;
   border: 1px solid var(--border); background: var(--surface);
   color: var(--text-2); cursor: pointer;
-  text-align: center; display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 0 4px;
   transition: all .18s var(--ease);
 }
 .chip:active { transform: translateY(2px); }
@@ -150,18 +188,22 @@ header {
   background: var(--accent-sf); border-color: var(--accent);
   color: var(--accent); font-weight: 600;
 }
+.chip-progress { font-size: .57rem; font-weight: 400; color: var(--muted); }
+.chip.on .chip-progress { color: var(--accent); opacity: .75; }
 
 .segmented {
-  display: flex; padding: 3px; gap: 3px;
+  display: flex; padding: 2px; gap: 2px;
   background: var(--bg-soft); border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 11px;
 }
 .segmented button {
-  flex: 1; min-height: 44px; padding: 8px 10px; font-size: .8rem; font-weight: 500;
-  font-family: inherit; border: none; border-radius: 9px;
+  flex: 1; min-height: 36px; padding: 5px 4px; font-size: .72rem; font-weight: 500;
+  font-family: inherit; border: none; border-radius: 9px; white-space: nowrap;
   background: transparent; color: var(--text-2); cursor: pointer;
   transition: all .2s var(--ease);
 }
+/* mode switcher stays the prominent one */
+#modeSeg button { min-height: 42px; font-size: .82rem; }
 .segmented button:active { transform: translateY(2px); }
 .segmented button.on {
   background: var(--surface-2); color: var(--text);
@@ -219,20 +261,27 @@ header {
 }
 .know-row {
   width: 100%; max-width: 520px;
-  display: flex; justify-content: center; margin-top: 14px;
+  display: flex; justify-content: center; gap: 8px; margin-top: 14px;
 }
 .know-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 12px 22px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; padding: 12px 20px; border-radius: 999px;
   border: 1px solid var(--border); background: var(--surface-2);
   color: var(--text-2); cursor: pointer;
   font-family: inherit; font-size: .82rem; font-weight: 500;
   transition: all .18s var(--ease);
 }
-.know-btn:hover  { border-color: var(--emerald); color: var(--emerald); }
 .know-btn:active { transform: translateY(2px); }
 .know-btn .chk { font-size: .9rem; line-height: 1; }
-.know-btn.on {
+
+.know-btn.partial:hover { border-color: var(--amber); color: var(--amber); }
+.know-btn.partial.on {
+  background: var(--amber); border-color: var(--amber);
+  color: #fff; font-weight: 600;
+  box-shadow: 0 1px 2px rgba(180,83,9,.25), 0 6px 16px rgba(180,83,9,.25);
+}
+.know-btn.good:hover { border-color: var(--emerald); color: var(--emerald); }
+.know-btn.good.on {
   background: var(--emerald); border-color: var(--emerald);
   color: #fff; font-weight: 600;
   box-shadow: 0 1px 2px rgba(5,150,105,.25), 0 6px 16px rgba(5,150,105,.25);
@@ -334,6 +383,84 @@ header {
 }
 .credit a:hover { color: var(--accent); }
 
+/* ── games ────────────────────────────────── */
+.game-wrap { width: 100%; max-width: 520px; }
+.game-msg {
+  padding: 40px 20px; text-align: center;
+  color: var(--muted); font-size: .9rem; line-height: 1.7;
+}
+.game-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; font-size: .78rem; color: var(--text-2);
+}
+.streak-big { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+.streak-best { font-size: .72rem; color: var(--muted); }
+
+/* matching */
+.match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.match-item {
+  min-height: 56px; padding: 10px 8px; border-radius: 14px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); cursor: pointer; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  text-align: center; line-height: 1.3;
+  transition: all .18s var(--ease);
+}
+.match-item:active { transform: translateY(2px); }
+.match-item .m-main { font-size: .88rem; font-weight: 600; }
+.match-item .m-sub  {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: .78rem; color: var(--text-2); direction: rtl;
+}
+.match-item.sel {
+  border-color: var(--accent); background: var(--accent-sf);
+  color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.match-item.ok {
+  border-color: var(--emerald); background: color-mix(in srgb, var(--emerald) 14%, transparent);
+  color: var(--emerald); pointer-events: none; opacity: .65;
+}
+.match-item.bad {
+  border-color: var(--rose); background: color-mix(in srgb, var(--rose) 14%, transparent);
+  color: var(--rose); animation: shake .32s var(--ease);
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* quiz */
+.quiz-q {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; box-shadow: var(--shadow-1);
+  padding: 28px 20px; margin-bottom: 12px; text-align: center;
+}
+.quiz-q .q-main { font-size: clamp(1.5rem, 6vw, 2.1rem); font-weight: 600; letter-spacing: -.02em; }
+.quiz-q .q-sub  {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: clamp(1rem, 4vw, 1.35rem); color: var(--text-2);
+  direction: rtl; line-height: 2; margin-top: 4px;
+}
+.quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  min-height: 52px; padding: 12px 16px; border-radius: 14px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); cursor: pointer; font-family: inherit;
+  font-size: .92rem; font-weight: 500; text-align: center;
+  transition: all .18s var(--ease);
+}
+.quiz-opt:active { transform: translateY(2px); }
+.quiz-opt.ok {
+  border-color: var(--emerald); background: color-mix(in srgb, var(--emerald) 16%, transparent);
+  color: var(--emerald); font-weight: 700;
+}
+.quiz-opt.bad {
+  border-color: var(--rose); background: color-mix(in srgb, var(--rose) 14%, transparent);
+  color: var(--rose); animation: shake .32s var(--ease);
+}
+.quiz-opts.locked .quiz-opt { pointer-events: none; }
+
 .confetti-piece {
   position: fixed; top: 0; left: 0; width: 8px; height: 8px; border-radius: 2px;
   pointer-events: none; z-index: 999;
@@ -370,51 +497,104 @@ header {
 </header>
 
 <div class="controls">
-  <div class="chips" id="chips"></div>
-  <div class="segmented">
-    <button id="btnAH" class="on" onclick="setDir('ah')">ערבית ← עברית</button>
-    <button id="btnHA" onclick="setDir('ha')">עברית ← ערבית</button>
+  <div class="segmented" id="modeSeg">
+    <button class="on" data-m="cards" onclick="setMode('cards')">כרטיסיות</button>
+    <button data-m="match" onclick="setMode('match')">התאמה</button>
+    <button data-m="quiz" onclick="setMode('quiz')">חידון</button>
   </div>
-  <div class="filter-label">נאמר בשיעור</div>
-  <div class="segmented" id="saidSeg">
-    <button class="on" data-v="all" onclick="setSaidFilter('all')">הכל</button>
-    <button data-v="said" onclick="setSaidFilter('said')">נאמרו</button>
-    <button data-v="not" onclick="setSaidFilter('not')">לא נאמרו</button>
-  </div>
-  <div class="filter-label">מילים שאני זוכר/ת</div>
-  <div class="segmented" id="knownSeg">
-    <button class="on" data-v="all" onclick="setKnownFilter('all')">הכל</button>
-    <button data-v="known" onclick="setKnownFilter('known')">זכורות</button>
-    <button data-v="not" onclick="setKnownFilter('not')">לא זכורות</button>
-  </div>
-</div>
-
-<div class="card-wrap" id="cardWrap" onclick="flip()">
-  <div class="card-inner" id="cardInner">
-    <div class="card-face" id="cardFront">
-      <span class="lesson-tag" id="lessonTag"></span>
-      <span class="badge" id="badgeEl" style="display:none">נאמר בשיעור</span>
-      <div id="frontContent"></div>
-      <span class="hint">לחצו לגילוי</span>
-    </div>
-    <div class="card-face card-back" id="cardBack">
-      <div id="backContent"></div>
+  <input type="search" class="search-box" id="searchBox" placeholder="חיפוש מילה…"
+         autocomplete="off" oninput="rebuild()">
+  <div class="filter-row">
+    <span class="filter-label">כיוון</span>
+    <div class="segmented">
+      <button id="btnAH" class="on" onclick="setDir('ah')">ערבית ← עברית</button>
+      <button id="btnHA" onclick="setDir('ha')">עברית ← ערבית</button>
     </div>
   </div>
-</div>
 
-<div class="know-row">
-  <button class="know-btn" id="knowBtn" aria-label="סמן כזכור" onclick="markKnown()">
-    <span class="chk">✓</span><span>זוכר</span>
+  <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
+    <span>סינון <span class="fsum" id="filterSummary"></span></span>
+    <span class="chev">▾</span>
   </button>
+
+  <div class="filter-panel" id="filterPanel">
+  <div class="chips" id="chips"></div>
+  <div class="filter-row">
+    <span class="filter-label">בשיעור</span>
+    <div class="segmented" id="saidSeg">
+      <button class="on" data-v="all" onclick="setSaidFilter('all')">הכל</button>
+      <button data-v="said" onclick="setSaidFilter('said')">נאמרו</button>
+      <button data-v="not" onclick="setSaidFilter('not')">לא נאמרו</button>
+    </div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">זכירה</span>
+    <div class="segmented" id="knownSeg">
+      <button class="on" data-v="all" onclick="setKnownFilter('all')">הכל</button>
+      <button data-v="none" onclick="setKnownFilter('none')">לא זוכר</button>
+      <button data-v="partial" onclick="setKnownFilter('partial')">בערך</button>
+      <button data-v="good" onclick="setKnownFilter('good')">זוכר טוב</button>
+    </div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">אורך</span>
+    <div class="segmented" id="wordsSeg">
+      <button class="on" data-v="all" onclick="setWordsFilter('all')">הכל</button>
+      <button data-v="1" onclick="setWordsFilter('1')">מילה</button>
+      <button data-v="2" onclick="setWordsFilter('2')">2 מילים</button>
+      <button data-v="3plus" onclick="setWordsFilter('3plus')">3+</button>
+    </div>
+  </div>
+  </div>
 </div>
 
-<div class="nav-row">
-  <button class="nav-btn" onclick="event.stopPropagation();move(-1)">קודם</button>
-  <button class="nav-btn" onclick="event.stopPropagation();shuffle()">ערבב</button>
-  <button class="nav-btn primary" onclick="event.stopPropagation();move(1)">הבא</button>
+<div id="modeCards">
+  <div class="card-wrap" id="cardWrap" onclick="flip()">
+    <div class="card-inner" id="cardInner">
+      <div class="card-face" id="cardFront">
+        <span class="lesson-tag" id="lessonTag"></span>
+        <span class="badge" id="badgeEl" style="display:none">נאמר בשיעור</span>
+        <div id="frontContent"></div>
+        <span class="hint">לחצו לגילוי</span>
+      </div>
+      <div class="card-face card-back" id="cardBack">
+        <div id="backContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="know-row">
+    <button class="know-btn partial" id="knowPartial" aria-label="זוכר בערך" onclick="setLevel('partial')">
+      <span class="chk">≈</span><span>זוכר בערך</span>
+    </button>
+    <button class="know-btn good" id="knowGood" aria-label="זוכר טוב" onclick="setLevel('good')">
+      <span class="chk">✓</span><span>זוכר טוב</span>
+    </button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="event.stopPropagation();move(-1)">קודם</button>
+    <button class="nav-btn" onclick="event.stopPropagation();shuffle()">ערבב</button>
+    <button class="nav-btn primary" onclick="event.stopPropagation();move(1)">הבא</button>
+  </div>
+  <div class="counter" id="counter"></div>
 </div>
-<div class="counter" id="counter"></div>
+
+<div class="game-wrap" id="modeMatch" style="display:none">
+  <div class="game-head">
+    <span id="matchScore"></span>
+    <button class="nav-btn" style="flex:0 0 auto;padding:8px 16px" onclick="startMatch()">סבב חדש</button>
+  </div>
+  <div id="matchBody"></div>
+</div>
+
+<div class="game-wrap" id="modeQuiz" style="display:none">
+  <div class="game-head">
+    <span><span class="streak-big" id="streakNow">0</span> <span>ברצף</span></span>
+    <span class="streak-best" id="streakBest"></span>
+  </div>
+  <div id="quizBody"></div>
+</div>
 <div class="status" id="status"></div>
 <div class="credit">נבנה על ידי <a href="https://www.linkedin.com/in/tzahi-ben-shimol-411111197/" target="_blank" rel="noopener noreferrer">צחי בן שימול</a></div>
 
@@ -627,21 +807,32 @@ header {
 <script>
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRS4HF5B78cLsLE-lzAuJoCfImLasfQGLvo9TXPWNhCpwLW9uqgEtwmhMXh8cdUAqpvblg8pQhas3MG/pub?output=csv";
 const LESSON_LABELS = {
-  "שיעור 2": "שיעור 2 – תעתיק האותיות בערבית",
-  "שיעור 6": "שיעור 6 – הברכות חלק א'",
-  "שיעור 7": "שיעור 7 – הברכות חלק ב'",
-  "שיעור 8": "שיעור 8 – שיר הפגישה והברכה",
-  "שיעור 9": "שיעור 9 – כינויי כבוד",
-  "שיעור 10": "שיעור 10 – ניהול שיחה",
-  "שיעור 11": "שיעור 11 – מצבי רוח",
-  "שיעור 12": "שיעור 12 – מילות שאלה",
-  "שיעור 13": "שיעור 13 – הצגה עצמית",
-  "שיעור 14": "שיעור 14 – שיחת היכרות"
+  "שיעור 2": "תעתיק האותיות בערבית",
+  "שיעור 6": "הברכות חלק א'",
+  "שיעור 7": "הברכות חלק ב'",
+  "שיעור 8": "שיר הפגישה והברכה",
+  "שיעור 9": "כינויי כבוד",
+  "שיעור 10": "ניהול שיחה",
+  "שיעור 11": "מצבי רוח",
+  "שיעור 12": "מילות שאלה",
+  "שיעור 13": "הצגה עצמית",
+  "שיעור 14": "שיחת היכרות"
 };
 
 let ALL = [], deck = [], idx = 0, dir = 'ah', lessons = [], enabled = new Set();
-let saidFilter = 'all', knownFilter = 'all';
-var knownIds = new Set();
+let lessonTopics = {};   /* lesson -> topic, read from the sheet's נושא column */
+let saidFilter = 'all', knownFilter = 'all', wordsFilter = 'all';
+/* cardId -> 'partial' | 'good'. Absent = not remembered yet. */
+var levelMap = {};
+
+/* games */
+const MATCH_N = 5, QUIZ_OPTS = 4;
+let mode = 'cards';
+let matchSel = null, matchDone = 0, matchRounds = 0, matchLesson = '';
+let streak = 0, quizLocked = false;
+let bestStreak = (function () {
+  try { return parseInt(localStorage.getItem('fc-best') || '0', 10) || 0; } catch (e) { return 0; }
+})();
 
 /* ── theme ────────────────────────────────── */
 function applyTheme(t) {
@@ -679,6 +870,15 @@ function parseCSV(text) {
   return rows.filter(function (r) { return r.some(function (c) { return c.trim(); }); });
 }
 
+/* Counts real words: tokens holding at least one Hebrew or Arabic letter, so
+   stray punctuation ("-", "/") and empty splits don't inflate the count. */
+function phraseWordCount(s) {
+  if (!s) return 0;
+  return String(s).split(/[\s\u00A0]+/).filter(function (t) {
+    return /[\u0590-\u05FF\u0600-\u06FF]/.test(t);
+  }).length;
+}
+
 function rowsToCards(rows) {
   if (!rows.length) return [];
   const head = rows[0].map(function (h) { return h.replace(/^\uFEFF/, '').trim(); });
@@ -692,17 +892,27 @@ function rowsToCards(rows) {
     const said = g('נאמר_בשיעור') === 'כן';
     const note = g('הערות');
     const lesson = g('שיעור');
-    const wordCount = he.split(/\s+/).filter(Boolean).length;
+    const topic = g('נושא');
     const isPair = (tr.split('/').length - 1) === 1 && (ar.split('/').length - 1) === 1;
     const id = lesson + '|' + tr;
+    /* Length of the phrase being learned (the Arabic side, via its
+       transliteration) — not the Hebrew gloss: עִנְדִי is one word to learn
+       even though "יש לי" is two. Gender pairs count one form only.
+       Computed, never stored — a hand-typed count silently goes stale the
+       moment a word is edited. The optional `מילים` column exists only to
+       override the handful of cases where the automatic count is arguable
+       (e.g. חַרְף - חֻרוּף, one word shown in singular+plural). */
+    const override = parseInt(g('מילים'), 10);
+    const words = override > 0 ? override
+                : phraseWordCount(isPair ? tr.split('/')[0] : tr);
     if (isPair) {
       const t = tr.split('/'), a = ar.split('/');
       out.push({ id: id, isGenderPair: true, arM: t[0].trim(), arF: t[1].trim(),
                  arabicM: a[0].trim(), arabicF: a[1].trim(),
-                 he: he, note: note, said: said, lesson: lesson, wordCount: wordCount });
+                 he: he, note: note, said: said, lesson: lesson, topic: topic, words: words });
     } else {
       out.push({ id: id, isGenderPair: false, ar: tr, arabic: ar,
-                 he: he, note: note, said: said, lesson: lesson, wordCount: wordCount });
+                 he: he, note: note, said: said, lesson: lesson, topic: topic, words: words });
     }
   }
   return out;
@@ -771,12 +981,14 @@ function show() {
   }
 
   const c = deck[idx];
-  document.getElementById('lessonTag').textContent = LESSON_LABELS[c.lesson] || c.lesson;
+  document.getElementById('lessonTag').textContent = lessonName(c.lesson);
   document.getElementById('badgeEl').style.display = c.said ? '' : 'none';
-  const isKnown = knownIds.has(c.id);
-  const kb = document.getElementById('knowBtn');
-  kb.classList.toggle('on', isKnown);
-  kb.querySelector('.chk').textContent = isKnown ? '🎉' : '✓';
+  const lvl = levelMap[c.id];
+  const kp = document.getElementById('knowPartial');
+  const kg = document.getElementById('knowGood');
+  kp.classList.toggle('on', lvl === 'partial');
+  kg.classList.toggle('on', lvl === 'good');
+  kg.querySelector('.chk').textContent = lvl === 'good' ? '🎉' : '✓';
 
   const arSide = c.isGenderPair ? genderHTML(c) : arabicHTML(c);
   if (dir === 'ah') { fc.innerHTML = arSide;      bc.innerHTML = hebrewHTML(c); }
@@ -838,15 +1050,19 @@ function burstConfetti(x, y) {
   }
 }
 
-async function markKnown() {
-  if (!deck.length || typeof toggleKnown !== 'function') return;
-  const nowKnown = await toggleKnown(deck[idx].id);
-  if (nowKnown === true) {
-    const rect = document.getElementById('knowBtn').getBoundingClientRect();
+/* Set (or toggle off) the memory level of the current card.
+   Deliberately does NOT advance — navigation stays a separate action. */
+async function setLevel(level) {
+  if (!deck.length || typeof saveLevel !== 'function') return;
+  const id = deck[idx].id;
+  const next = levelMap[id] === level ? null : level;
+  const applied = await saveLevel(id, next);
+  if (applied === 'good') {
+    const rect = document.getElementById('knowGood').getBoundingClientRect();
     burstConfetti(rect.left + rect.width / 2, rect.top);
     playSparkle();
-    setTimeout(function () { move(1); }, 480);
   }
+  updateChipProgress();
 }
 
 function shuffleDeck() {
@@ -864,6 +1080,27 @@ function setDir(d) {
   document.getElementById('btnAH').classList.toggle('on', d === 'ah');
   document.getElementById('btnHA').classList.toggle('on', d === 'ha');
   show();
+  if (mode === 'match') startMatch();
+  else if (mode === 'quiz') nextQuiz();
+}
+
+function lessonProgress(ls) {
+  let total = 0, good = 0;
+  ALL.forEach(function (c) {
+    if (c.lesson !== ls) return;
+    total++;
+    if (levelMap[c.id] === 'good') good++;
+  });
+  return good + '/' + total;
+}
+
+/* Refresh just the X/Y badges — levelMap changes after sign-in and on every
+   level toggle, but the chips themselves don't need rebuilding. */
+function updateChipProgress() {
+  document.querySelectorAll('#chips .chip').forEach(function (el) {
+    const p = el.querySelector('.chip-progress');
+    if (p) p.textContent = lessonProgress(el.dataset.lesson);
+  });
 }
 
 function renderChips() {
@@ -872,7 +1109,14 @@ function renderChips() {
   lessons.forEach(function (ls) {
     const el = document.createElement('label');
     el.className = 'chip on';
-    el.textContent = LESSON_LABELS[ls] || ls;
+    el.dataset.lesson = ls;
+    const name = document.createElement('span');
+    name.textContent = lessonName(ls);
+    const prog = document.createElement('span');
+    prog.className = 'chip-progress';
+    prog.textContent = lessonProgress(ls);
+    el.appendChild(name);
+    el.appendChild(prog);
     el.onclick = function () {
       if (enabled.has(ls)) { enabled.delete(ls); el.classList.remove('on'); }
       else { enabled.add(ls); el.classList.add('on'); }
@@ -898,18 +1142,60 @@ function setKnownFilter(v) {
   rebuild();
 }
 
+function setWordsFilter(v) {
+  wordsFilter = v;
+  document.querySelectorAll('#wordsSeg button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.v === v);
+  });
+  rebuild();
+}
+
+function toggleFilters() {
+  const open = !document.getElementById('filterPanel').classList.contains('open');
+  document.getElementById('filterPanel').classList.toggle('open', open);
+  document.getElementById('filterToggle').classList.toggle('open', open);
+  try { localStorage.setItem('fc-filters', open ? '1' : '0'); } catch (e) {}
+}
+
+/* Collapsed filters must still tell you what's active, or you can't tell why
+   words are missing from the deck. */
+function updateFilterSummary() {
+  const bits = [];
+  if (lessons.length && enabled.size !== lessons.length) bits.push(enabled.size + ' שיעורים');
+  if (saidFilter === 'said') bits.push('נאמרו');
+  if (saidFilter === 'not')  bits.push('לא נאמרו');
+  if (knownFilter === 'none')    bits.push('לא זוכר');
+  if (knownFilter === 'partial') bits.push('בערך');
+  if (knownFilter === 'good')    bits.push('זוכר טוב');
+  if (wordsFilter === '1')     bits.push('מילה אחת');
+  if (wordsFilter === '2')     bits.push('2 מילים');
+  if (wordsFilter === '3plus') bits.push('3+ מילים');
+  const q = (document.getElementById('searchBox').value || '').trim();
+  if (q) bits.push('"' + q + '"');
+  document.getElementById('filterSummary').textContent =
+    '· ' + (bits.length ? bits.join(', ') : 'הכל') + ' · ' + deck.length + ' מילים';
+}
+
 /* Recompute the deck after a data load or filter change.
    Keeps the card the user is currently looking at on screen — boot runs this
    3x (fallback / sheet / auth) and the word must NOT jump around. */
 function rebuild() {
   const current = deck[idx];
+  const q = (document.getElementById('searchBox').value || '').trim().toLowerCase();
   deck = ALL.filter(function (c) {
     if (!enabled.has(c.lesson)) return false;
     if (saidFilter === 'said' && !c.said) return false;
     if (saidFilter === 'not'  && c.said) return false;
-    const known = knownIds.has(c.id);
-    if (knownFilter === 'known' && !known) return false;
-    if (knownFilter === 'not'   && known) return false;
+    const lvl = levelMap[c.id] || 'none';
+    if (knownFilter !== 'all' && lvl !== knownFilter) return false;
+    if (wordsFilter === '1'     && c.words !== 1) return false;
+    if (wordsFilter === '2'     && c.words !== 2) return false;
+    if (wordsFilter === '3plus' && c.words < 3)   return false;
+    if (q) {
+      const hay = [c.ar, c.arM, c.arF, c.arabic, c.arabicM, c.arabicF, c.he, c.note]
+        .filter(Boolean).join(' ').toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
     return true;
   });
   shuffleDeck();
@@ -921,12 +1207,271 @@ function rebuild() {
   }
   idx = pos > -1 ? pos : 0;
   show();
+  updateFilterSummary();
+  /* the word pool changed — restart whichever game is on screen */
+  if (mode === 'match') startMatch();
+  else if (mode === 'quiz') nextQuiz();
+}
+
+/* ── games ────────────────────────────────── */
+/* Gender-pair cards use the masculine form as their single prompt. */
+function promptMain(c) { return c.isGenderPair ? c.arM : c.ar; }
+function promptSub(c)  { return c.isGenderPair ? c.arabicM : c.arabic; }
+
+/* Games follow the same direction toggle as the flashcards. */
+function qText(c) { return dir === 'ah' ? promptMain(c) : c.he; }
+function qSub(c)  { return dir === 'ah' ? promptSub(c)  : ''; }
+function aText(c) { return dir === 'ah' ? c.he : promptMain(c); }
+function aSub(c)  { return dir === 'ah' ? ''   : promptSub(c); }
+
+/* Distinct answer texts only — two cards meaning the same thing would make a
+   match ambiguous and a quiz unanswerable. */
+function uniquePool() {
+  const seen = {}, out = [];
+  deck.forEach(function (c) {
+    const k = aText(c), p = qText(c);
+    if (!k || !p || seen[k]) return;
+    seen[k] = 1; out.push(c);
+  });
+  return out;
+}
+
+function pickRandom(arr, n) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a.slice(0, n);
+}
+
+/* Distractors should come from the same lesson as the answer — unrelated
+   words make the question guessable without knowing the word. Tops up from
+   the wider pool only if that lesson can't supply enough. */
+function distractors(pool, correct, n) {
+  const same = pool.filter(function (c) {
+    return c.lesson === correct.lesson && c.id !== correct.id;
+  });
+  let picked = pickRandom(same, n);
+  if (picked.length < n) {
+    const ids = {};
+    picked.forEach(function (c) { ids[c.id] = 1; });
+    const rest = pool.filter(function (c) { return c.id !== correct.id && !ids[c.id]; });
+    picked = picked.concat(pickRandom(rest, n - picked.length));
+  }
+  return picked;
+}
+
+/* A matching round should also be one coherent lesson where possible. */
+function pickMatchSet(pool, n) {
+  const byLesson = {};
+  pool.forEach(function (c) {
+    (byLesson[c.lesson] = byLesson[c.lesson] || []).push(c);
+  });
+  const eligible = Object.keys(byLesson).filter(function (k) {
+    return byLesson[k].length >= n;
+  });
+  if (!eligible.length) return pickRandom(pool, n);
+  const lesson = pickRandom(eligible, 1)[0];
+  return pickRandom(byLesson[lesson], n);
+}
+
+function gameMsg(el, txt) {
+  el.innerHTML = '';
+  const d = document.createElement('div');
+  d.className = 'game-msg';
+  d.textContent = txt;
+  el.appendChild(d);
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('#modeSeg button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.m === m);
+  });
+  document.getElementById('modeCards').style.display = m === 'cards' ? '' : 'none';
+  document.getElementById('modeMatch').style.display = m === 'match' ? '' : 'none';
+  document.getElementById('modeQuiz').style.display  = m === 'quiz'  ? '' : 'none';
+  if (m === 'cards') show();
+  if (m === 'match') startMatch();
+  if (m === 'quiz')  { streak = 0; updateStreak(); nextQuiz(); }
+}
+
+/* ── matching game ───────────────────────── */
+function makeMatchItem(c, side) {
+  const b = document.createElement('button');
+  b.className = 'match-item';
+  b.__card = c; b.__side = side;
+  const main = document.createElement('span');
+  main.className = 'm-main';
+  main.textContent = side === 'q' ? qText(c) : aText(c);
+  b.appendChild(main);
+  const subTxt = side === 'q' ? qSub(c) : aSub(c);
+  if (subTxt) {
+    const sub = document.createElement('span');
+    sub.className = 'm-sub';
+    sub.textContent = subTxt;
+    b.appendChild(sub);
+  }
+  b.onclick = function () { matchTap(b); };
+  return b;
+}
+
+function updateMatchScore() {
+  const topic = matchLesson ? lessonName(matchLesson) + '  ·  ' : '';
+  document.getElementById('matchScore').textContent =
+    topic + matchDone + '/' + MATCH_N + ' הותאמו' + (matchRounds ? '  ·  סבבים: ' + matchRounds : '');
+}
+
+function startMatch() {
+  const body = document.getElementById('matchBody');
+  matchSel = null; matchDone = 0;
+  const pool = uniquePool();
+  if (pool.length < MATCH_N) {
+    gameMsg(body, 'צריך לפחות ' + MATCH_N + ' מילים בסינון הנוכחי כדי לשחק. בחרו עוד שיעורים או נקו את החיפוש.');
+    document.getElementById('matchScore').textContent = '';
+    return;
+  }
+  const five = pickMatchSet(pool, MATCH_N);
+  matchLesson = five[0] ? five[0].lesson : '';
+  const grid = document.createElement('div');
+  grid.className = 'match-grid';
+  const qs = pickRandom(five, MATCH_N);
+  const as = pickRandom(five, MATCH_N);
+  for (let i = 0; i < MATCH_N; i++) {
+    grid.appendChild(makeMatchItem(qs[i], 'q'));
+    grid.appendChild(makeMatchItem(as[i], 'a'));
+  }
+  body.innerHTML = '';
+  body.appendChild(grid);
+  updateMatchScore();
+}
+
+function matchTap(el) {
+  if (el.classList.contains('ok')) return;
+  if (matchSel === el) { el.classList.remove('sel'); matchSel = null; return; }
+  if (!matchSel || matchSel.__side === el.__side) {
+    if (matchSel) matchSel.classList.remove('sel');
+    matchSel = el; el.classList.add('sel');
+    return;
+  }
+  const other = matchSel;
+  matchSel = null;
+  other.classList.remove('sel');
+  if (other.__card.id === el.__card.id) {
+    other.classList.add('ok'); el.classList.add('ok');
+    matchDone++;
+    updateMatchScore();
+    if (matchDone === MATCH_N) {
+      matchRounds++;
+      updateMatchScore();
+      const r = el.getBoundingClientRect();
+      burstConfetti(r.left + r.width / 2, r.top);
+      playSparkle();
+    }
+  } else {
+    other.classList.add('bad'); el.classList.add('bad');
+    setTimeout(function () {
+      other.classList.remove('bad'); el.classList.remove('bad');
+    }, 420);
+  }
+}
+
+/* ── quiz game ───────────────────────────── */
+function updateStreak() {
+  document.getElementById('streakNow').textContent = streak;
+  document.getElementById('streakBest').textContent = bestStreak ? 'שיא: ' + bestStreak : '';
+}
+
+function nextQuiz() {
+  const body = document.getElementById('quizBody');
+  quizLocked = false;
+  const pool = uniquePool();
+  if (pool.length < QUIZ_OPTS) {
+    gameMsg(body, 'צריך לפחות ' + QUIZ_OPTS + ' מילים בסינון הנוכחי כדי לשחק. בחרו עוד שיעורים או נקו את החיפוש.');
+    return;
+  }
+  const correct = pickRandom(pool, 1)[0];
+  const others = distractors(pool, correct, QUIZ_OPTS - 1);
+  const opts = pickRandom(others.concat([correct]), QUIZ_OPTS);
+
+  body.innerHTML = '';
+  const q = document.createElement('div');
+  q.className = 'quiz-q';
+  const qm = document.createElement('div');
+  qm.className = 'q-main';
+  qm.textContent = qText(correct);
+  q.appendChild(qm);
+  const qs = qSub(correct);
+  if (qs) {
+    const sub = document.createElement('div');
+    sub.className = 'q-sub';
+    sub.textContent = qs;
+    q.appendChild(sub);
+  }
+  body.appendChild(q);
+
+  const box = document.createElement('div');
+  box.className = 'quiz-opts';
+  box.id = 'quizOpts';
+  let correctBtn = null;
+  opts.forEach(function (c) {
+    const b = document.createElement('button');
+    b.className = 'quiz-opt';
+    b.textContent = aText(c);
+    if (c.id === correct.id) correctBtn = b;
+    b.onclick = function () { quizAnswer(b, c.id === correct.id, correctBtn); };
+    box.appendChild(b);
+  });
+  body.appendChild(box);
+}
+
+function quizAnswer(btn, isCorrect, correctBtn) {
+  if (quizLocked) return;
+  quizLocked = true;
+  document.getElementById('quizOpts').classList.add('locked');
+  if (isCorrect) {
+    btn.classList.add('ok');
+    streak++;
+    if (streak > bestStreak) { bestStreak = streak; try { localStorage.setItem('fc-best', String(bestStreak)); } catch (e) {} }
+    updateStreak();
+    playSparkle();
+    if (streak % 5 === 0) {
+      const r = btn.getBoundingClientRect();
+      burstConfetti(r.left + r.width / 2, r.top);
+    }
+    setTimeout(nextQuiz, 700);
+  } else {
+    btn.classList.add('bad');
+    if (correctBtn) correctBtn.classList.add('ok');
+    streak = 0;
+    updateStreak();
+    setTimeout(nextQuiz, 1700);
+  }
+}
+
+/* "שיעור 10" -> 10, so chips sort 2,6,7,8,9,10... not lexicographically */
+function lessonNum(ls) {
+  const m = String(ls).match(/\d+/);
+  return m ? parseInt(m[0], 10) : 9999;
+}
+
+/* Display name for a lesson. The sheet's `נושא` column wins, so a brand-new
+   lesson shows its real topic with no code change or rebuild; LESSON_LABELS
+   is only a fallback for rows where that column is empty. */
+function lessonName(ls) {
+  return lessonTopics[ls] || LESSON_LABELS[ls] || ls;
 }
 
 function loadCards(cards, source) {
   ALL = cards;
   lessons = [];
-  ALL.forEach(function (c) { if (lessons.indexOf(c.lesson) === -1) lessons.push(c.lesson); });
+  lessonTopics = {};
+  ALL.forEach(function (c) {
+    if (lessons.indexOf(c.lesson) === -1) lessons.push(c.lesson);
+    if (c.topic && !lessonTopics[c.lesson]) lessonTopics[c.lesson] = c.topic;
+  });
+  lessons.sort(function (a, b) { return lessonNum(a) - lessonNum(b); });
   enabled = new Set(lessons);
   renderChips();
   rebuild();
@@ -940,6 +1485,13 @@ function bootFallback(msg) {
 }
 
 (function boot() {
+  /* filters start collapsed so the card is visible without scrolling;
+     the choice is remembered once the user opens them */
+  let open = false;
+  try { open = localStorage.getItem('fc-filters') === '1'; } catch (e) {}
+  document.getElementById('filterPanel').classList.toggle('open', open);
+  document.getElementById('filterToggle').classList.toggle('open', open);
+
   bootFallback('');
   if (!SHEET_CSV_URL) return;
   document.getElementById('status').textContent = 'מסנכרן מגוגל שיטס…';
@@ -957,6 +1509,8 @@ function bootFallback(msg) {
 })();
 
 document.addEventListener('keydown', function (e) {
+  if (mode !== 'cards') return;                       /* games have their own UI */
+  if (e.target && e.target.id === 'searchBox') return; /* don't hijack typing */
   if (e.key === 'ArrowLeft')  move(1);
   if (e.key === 'ArrowRight') move(-1);
   if (e.key === ' ') { e.preventDefault(); flip(); }
@@ -967,7 +1521,7 @@ document.addEventListener('keydown', function (e) {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, arrayUnion, arrayRemove }
+import { getFirestore, doc, getDoc, setDoc, deleteField }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const app = initializeApp({"apiKey": "AIzaSyCNGYq4rLwx8h2ffO4n-AxJBlpaW1D1fhs", "authDomain": "danshi-83fe9.firebaseapp.com", "projectId": "danshi-83fe9", "storageBucket": "danshi-83fe9.firebasestorage.app", "messagingSenderId": "811151615732", "appId": "1:811151615732:web:5b0210ad256a35236460a1", "measurementId": "G-Z2RJ53RWYY"});
@@ -981,29 +1535,23 @@ window.signIn = function () {
 };
 window.signOutUser = function () { signOut(auth); };
 
-async function loadKnown(uid) {
+async function loadLevels(uid) {
   const snap = await getDoc(doc(db, 'users', uid));
-  knownIds = new Set(snap.exists() ? (snap.data().known || []) : []);
+  levelMap = (snap.exists() && snap.data().levels) || {};
   if (typeof rebuild === 'function') rebuild();
-  if (typeof show === 'function') show();
+  if (typeof updateChipProgress === 'function') updateChipProgress();
 }
 
-window.toggleKnown = async function (id) {
+/* level: 'partial' | 'good' | null (null clears it). Returns what was applied. */
+window.saveLevel = async function (id, level) {
   if (!id) return null;
   if (!currentUser) { window.signIn(); return null; }
   const ref = doc(db, 'users', currentUser.uid);
-  let nowKnown;
-  if (knownIds.has(id)) {
-    knownIds.delete(id);
-    nowKnown = false;
-    await setDoc(ref, { known: arrayRemove(id) }, { merge: true });
-  } else {
-    knownIds.add(id);
-    nowKnown = true;
-    await setDoc(ref, { known: arrayUnion(id) }, { merge: true });
-  }
+  if (level) levelMap[id] = level;
+  else delete levelMap[id];
   if (typeof show === 'function') show();
-  return nowKnown;
+  await setDoc(ref, { levels: { [id]: level || deleteField() } }, { merge: true });
+  return level;
 };
 
 onAuthStateChanged(auth, function (user) {
@@ -1017,14 +1565,14 @@ onAuthStateChanged(auth, function (user) {
     userChip.style.display = '';
     authAvatar.src = user.photoURL || '';
     authName.textContent = user.displayName || user.email || '';
-    loadKnown(user.uid);
+    loadLevels(user.uid);
   } else {
     authBtn.style.display = '';
     userChip.style.display = 'none';
     authAvatar.style.display = 'none';
-    knownIds = new Set();
+    levelMap = {};
     if (typeof rebuild === 'function') rebuild();
-    if (typeof show === 'function') show();
+    if (typeof updateChipProgress === 'function') updateChipProgress();
   }
 });
 </script>
