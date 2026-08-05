@@ -145,19 +145,43 @@ header {
 }
 .filter-row > .segmented { flex: 1; min-width: 0; }
 
-/* collapsible filter panel — keeps the card near the top of the screen */
+/* collapsible filter panel — keeps the card near the top of the screen.
+   Styled to invite clicking: accent gradient border + icon + live badge,
+   not a plain gray bar — a "just a link" look tested as easy to overlook. */
 .filter-toggle {
+  position: relative;
   display: flex; align-items: center; justify-content: space-between;
-  width: 100%; min-height: 38px; padding: 6px 14px;
-  border-radius: 11px; border: 1px solid var(--border); background: var(--surface);
-  color: var(--text-2); cursor: pointer;
-  font-family: inherit; font-size: .72rem; font-weight: 500;
-  transition: all .18s var(--ease);
+  width: 100%; min-height: 46px; padding: 9px 16px;
+  border-radius: 13px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); cursor: pointer;
+  font-family: inherit; font-size: .78rem; font-weight: 600;
+  box-shadow: 0 1px 2px rgba(24,24,27,.04);
+  transition: all .2s var(--ease);
+}
+.filter-toggle:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 .filter-toggle:active { transform: translateY(2px); }
-.filter-toggle .chev { transition: transform .22s var(--ease); font-size: .65rem; }
+.filter-toggle.active {
+  border-color: var(--accent);
+  background: var(--accent-sf);
+  color: var(--accent);
+}
+.filter-toggle .flabel { display: flex; align-items: center; gap: 8px; }
+.filter-toggle .ficon { font-size: .95rem; }
+.filter-toggle .fcount { color: var(--muted); font-weight: 400; font-size: .74rem; }
+.filter-toggle.active .fcount { color: var(--accent); opacity: .85; }
+.filter-toggle .fbadge {
+  display: none; min-width: 19px; height: 19px; padding: 0 5px;
+  border-radius: 999px; background: var(--accent); color: #fff;
+  font-size: .66rem; font-weight: 700; line-height: 19px; text-align: center;
+}
+.filter-toggle.active .fbadge { display: inline-block; }
+.filter-toggle .chev {
+  transition: transform .22s var(--ease); font-size: .7rem; color: inherit; opacity: .6;
+}
 .filter-toggle.open .chev { transform: rotate(180deg); }
-.filter-toggle .fsum { color: var(--muted); font-weight: 400; }
 .filter-panel { display: none; flex-direction: column; gap: 7px; }
 .filter-panel.open { display: flex; }
 
@@ -373,6 +397,78 @@ header {
 
 .filter-label { font-size: .7rem; color: var(--muted); margin: 2px 2px -2px; }
 
+/* ── tip button ───────────────────────────── */
+.tip-wrap {
+  position: relative; width: 100%; max-width: 520px; margin-top: 22px;
+  padding: 3px; /* gap for the border light — the button must NOT fill the
+                   whole wrap, or its own background paints over the SVG
+                   stroke sitting right behind its edges */
+}
+/* Light literally travels along the button's own outline (an SVG stroke on
+   a rect matching its exact rounded-rect shape via JS, see sizeTipBorder())
+   — NOT a rotating conic-gradient disc, which sweeps by angle around the
+   center and looks like a spinning pinwheel on a non-circular shape instead
+   of tracing the border. */
+.tip-border {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: visible; pointer-events: none;
+  animation: tip-fade 5s ease-out 1 forwards;
+}
+#tipBorderRect {
+  fill: none; stroke: url(#tipGrad); stroke-width: 2.5; stroke-linecap: round;
+  filter: drop-shadow(0 0 3px rgba(129,140,248,.9));
+  animation: tip-chase 5s linear 1 forwards;
+}
+@keyframes tip-chase { to { stroke-dashoffset: var(--tip-dash-end, 0); } }
+/* one-time flourish, not a permanent loop — the light chases the border for
+   5s total then fades to nothing, so it doesn't keep drawing the eye during
+   a long study session (explicit "not intrusive" ask) */
+@keyframes tip-fade {
+  0%   { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.tip-btn {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 50px; padding: 12px 20px; border-radius: 17px;
+  border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  font-weight: 700; font-size: .88rem; text-decoration: none;
+  transition: transform .18s var(--ease), background .18s var(--ease);
+}
+.tip-btn:hover  { background: var(--surface-2); }
+.tip-btn:active { transform: translateY(2px); }
+
+.tip-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.5);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.tip-overlay.open { display: flex; }
+.tip-modal {
+  width: 100%; max-width: 360px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 30px 24px 22px; text-align: center; box-shadow: var(--shadow-2);
+}
+.tip-modal-emoji { font-size: 2.1rem; margin-bottom: 12px; }
+.tip-modal-text {
+  font-size: .88rem; line-height: 1.75; color: var(--text-2); margin-bottom: 22px;
+}
+.tip-modal-go {
+  display: block; width: 100%; min-height: 48px; line-height: 48px;
+  border-radius: 12px; background: var(--accent); color: #fff;
+  font-weight: 700; font-size: .88rem; text-decoration: none; margin-bottom: 8px;
+  transition: all .18s var(--ease);
+}
+.tip-modal-go:hover  { background: var(--accent-2); }
+.tip-modal-go:active { transform: translateY(2px); }
+.tip-modal-close {
+  border: none; background: transparent; color: var(--muted);
+  font-family: inherit; font-size: .8rem; cursor: pointer;
+  padding: 10px; min-height: 44px; width: 100%;
+}
+
 .credit {
   margin-top: 26px; font-size: .72rem; color: var(--muted);
   text-align: center;
@@ -502,8 +598,6 @@ header {
     <button data-m="match" onclick="setMode('match')">התאמה</button>
     <button data-m="quiz" onclick="setMode('quiz')">חידון</button>
   </div>
-  <input type="search" class="search-box" id="searchBox" placeholder="חיפוש מילה…"
-         autocomplete="off" oninput="rebuild()">
   <div class="filter-row">
     <span class="filter-label">כיוון</span>
     <div class="segmented">
@@ -513,11 +607,18 @@ header {
   </div>
 
   <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">
-    <span>סינון <span class="fsum" id="filterSummary"></span></span>
+    <span class="flabel">
+      <span class="ficon">🔍</span>
+      <span>סינון וחיפוש</span>
+      <span class="fbadge" id="filterBadge"></span>
+    </span>
+    <span class="fcount" id="filterSummary"></span>
     <span class="chev">▾</span>
   </button>
 
   <div class="filter-panel" id="filterPanel">
+  <input type="search" class="search-box" id="searchBox" placeholder="חיפוש מילה…"
+         autocomplete="off" oninput="rebuild()">
   <div class="chips" id="chips"></div>
   <div class="filter-row">
     <span class="filter-label">בשיעור</span>
@@ -596,6 +697,37 @@ header {
   <div id="quizBody"></div>
 </div>
 <div class="status" id="status"></div>
+
+<div class="tip-wrap" id="tipWrap">
+  <svg class="tip-border" id="tipBorderSvg">
+    <defs>
+      <linearGradient id="tipGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"   stop-color="#818cf8"/>
+        <stop offset="35%"  stop-color="#f472b6"/>
+        <stop offset="70%"  stop-color="#fbbf24"/>
+        <stop offset="100%" stop-color="#34d399"/>
+      </linearGradient>
+    </defs>
+    <rect id="tipBorderRect"/>
+  </svg>
+  <button class="tip-btn" onclick="openTipModal()">
+    <span>💛</span><span>מעוניין להשאיר טיפ?</span>
+  </button>
+</div>
+
+<div class="tip-overlay" id="tipOverlay" onclick="if(event.target===this) closeTipModal()">
+  <div class="tip-modal">
+    <div class="tip-modal-emoji">💛</div>
+    <p class="tip-modal-text">
+      היי, אני צחי, והשקעתי לא מעט זמן לבנות את הממשק הזה על מנת שיהיה נוח לשימוש.<br>
+      אם מישהו מעוניין לתמוך, אני אשמח :)
+    </p>
+    <a class="tip-modal-go" href="https://links.payboxapp.com/PdCvhJd4k5b"
+       target="_blank" rel="noopener noreferrer" onclick="closeTipModal()">להשאיר טיפ 💛</a>
+    <button class="tip-modal-close" onclick="closeTipModal()">סגירה</button>
+  </div>
+</div>
+
 <div class="credit">נבנה על ידי <a href="https://www.linkedin.com/in/tzahi-ben-shimol-411111197/" target="_blank" rel="noopener noreferrer">צחי בן שימול</a></div>
 
 <script type="text/plain" id="fallbackCsv">
@@ -844,6 +976,36 @@ function applyTheme(t) {
 function toggleTheme() {
   applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 }
+
+function openTipModal()  { document.getElementById('tipOverlay').classList.add('open'); }
+function closeTipModal() { document.getElementById('tipOverlay').classList.remove('open'); }
+
+/* Sizes the tip button's border-tracing SVG to the button's exact pixel box
+   (not a fixed viewBox — the button's width is responsive) and computes the
+   real outline length via getTotalLength(), so the traveling dash hugs the
+   actual rounded-rect path instead of guessing a perimeter. */
+function sizeTipBorder() {
+  const wrap = document.getElementById('tipWrap');
+  const svg = document.getElementById('tipBorderSvg');
+  const rect = document.getElementById('tipBorderRect');
+  if (!wrap || !svg || !rect) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  if (!w || !h) return;
+  const sw = 2.5, r = 16;
+  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+  rect.setAttribute('x', sw / 2);
+  rect.setAttribute('y', sw / 2);
+  rect.setAttribute('width', Math.max(w - sw, 1));
+  rect.setAttribute('height', Math.max(h - sw, 1));
+  rect.setAttribute('rx', r);
+  rect.setAttribute('ry', r);
+  const len = rect.getTotalLength();
+  const dash = len * 0.16; /* bright segment ≈ 16% of the outline */
+  rect.style.strokeDasharray = dash + ' ' + (len - dash);
+  rect.style.strokeDashoffset = '0';
+  rect.style.setProperty('--tip-dash-end', -(len * 3)); /* 3 loops in 5s */
+}
+window.addEventListener('resize', sizeTipBorder);
 (function () {
   let t = null;
   try { t = localStorage.getItem('fc-theme'); } catch (e) {}
@@ -1171,9 +1333,13 @@ function updateFilterSummary() {
   if (wordsFilter === '2')     bits.push('2 מילים');
   if (wordsFilter === '3plus') bits.push('3+ מילים');
   const q = (document.getElementById('searchBox').value || '').trim();
-  if (q) bits.push('"' + q + '"');
-  document.getElementById('filterSummary').textContent =
-    '· ' + (bits.length ? bits.join(', ') : 'הכל') + ' · ' + deck.length + ' מילים';
+  if (q) bits.push('חיפוש "' + q + '"');
+
+  const toggle = document.getElementById('filterToggle');
+  toggle.classList.toggle('active', bits.length > 0);
+  toggle.title = bits.length ? bits.join(', ') : '';
+  document.getElementById('filterBadge').textContent = bits.length || '';
+  document.getElementById('filterSummary').textContent = deck.length + ' מילים';
 }
 
 /* Recompute the deck after a data load or filter change.
@@ -1492,6 +1658,7 @@ function bootFallback(msg) {
   document.getElementById('filterPanel').classList.toggle('open', open);
   document.getElementById('filterToggle').classList.toggle('open', open);
 
+  sizeTipBorder();
   bootFallback('');
   if (!SHEET_CSV_URL) return;
   document.getElementById('status').textContent = 'מסנכרן מגוגל שיטס…';
@@ -1509,6 +1676,7 @@ function bootFallback(msg) {
 })();
 
 document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') { closeTipModal(); return; }
   if (mode !== 'cards') return;                       /* games have their own UI */
   if (e.target && e.target.id === 'searchBox') return; /* don't hijack typing */
   if (e.key === 'ArrowLeft')  move(1);
