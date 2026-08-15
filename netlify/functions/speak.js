@@ -58,7 +58,18 @@ exports.handler = async function (event) {
   }
 
   // ── quota gate — runs BEFORE touching Azure ──────────────────────────
-  const store = getStore('tts-usage');
+  // getStore() is supposed to auto-detect the site context on a real
+  // deployed function, with no extra config. In practice that detection
+  // sometimes fails on Netlify's side (MissingBlobsEnvironmentError, a
+  // known platform issue, not specific to this app) — so site ID + a
+  // token are passed explicitly as a fallback whenever they're set.
+  const store = (process.env.NETLIFY_SITE_ID && process.env.NETLIFY_BLOBS_TOKEN)
+    ? getStore({
+        name: 'tts-usage',
+        siteID: process.env.NETLIFY_SITE_ID,
+        token: process.env.NETLIFY_BLOBS_TOKEN,
+      })
+    : getStore('tts-usage');
   const monthKey = new Date().toISOString().slice(0, 7); // e.g. "2026-08"
   const used = parseInt((await store.get(monthKey)) || '0', 10);
 
