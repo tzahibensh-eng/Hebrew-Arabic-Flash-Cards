@@ -81,8 +81,13 @@ exports.handler = async function (event) {
   }
 
   // ── call Azure ────────────────────────────────────────────────────
+  // xml:lang must match the voice's own locale (e.g. "ar-LB" for
+  // ar-LB-LaylaNeural) — a mismatched lang tag (this used to be hardcoded
+  // to "ar-JO" regardless of voice) can make Azure apply the wrong
+  // region's text-normalization/prosody rules on top of the right voice.
+  const locale = voice.split('-').slice(0, 2).join('-');
   const ssml =
-    '<speak version="1.0" xml:lang="ar-JO">' +
+    '<speak version="1.0" xml:lang="' + locale + '">' +
     '<voice name="' + voice + '">' + escapeXml(text) + '</voice>' +
     '</speak>';
 
