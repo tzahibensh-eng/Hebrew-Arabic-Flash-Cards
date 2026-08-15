@@ -1036,6 +1036,13 @@ function parseCSV(text) {
 
 /* Counts real words: tokens holding at least one Hebrew or Arabic letter, so
    stray punctuation ("-", "/") and empty splits don't inflate the count. */
+/* Strips Hebrew niqqud and Arabic tashkeel (including the teacher's own
+   tsere/cholam marks, which fall in the same Unicode range) so search
+   matches with or without diacritics typed on either side. */
+function stripDiacritics(s) {
+  return String(s).replace(/[\u0591-\u05C7\u064B-\u0670\u06D6-\u06ED]/g, '');
+}
+
 function phraseWordCount(s) {
   if (!s) return 0;
   return String(s).split(/[\s\u00A0]+/).filter(function (t) {
@@ -1165,6 +1172,28 @@ function hebrewHTML(c) {
          (c.note ? '<div class="note">' + esc(c.note) + '</div>' : '');
 }
 
+/* Sizes the flip-card box to whichever face (front/back) is actually
+   taller. Long gender-pair phrases can wrap differently once the Arabic
+   web font ('Noto Naskh Arabic', loaded with display=swap) finishes
+   downloading and swaps in over the fallback serif — if that swap happens
+   AFTER this measurement, the box stays locked to the shorter fallback
+   layout and text spills past the card border. document.fonts.ready (see
+   boot()) re-runs this once the real font is active, so the box always
+   ends up sized to the font that's actually on screen. */
+function syncCardHeight() {
+  if (!document.getElementById('cardInner')) return;
+  ['cardInner', 'cardWrap'].forEach(function (id) {
+    document.getElementById(id).style.minHeight = '';
+  });
+  document.querySelectorAll('.card-face').forEach(function (f) { f.style.minHeight = ''; });
+  const h = Math.max(
+    document.getElementById('cardFront').scrollHeight,
+    document.getElementById('cardBack').scrollHeight, 340) + 'px';
+  document.getElementById('cardInner').style.minHeight = h;
+  document.getElementById('cardWrap').style.minHeight = h;
+  document.querySelectorAll('.card-face').forEach(function (f) { f.style.minHeight = h; });
+}
+
 function show() {
   const fc = document.getElementById('frontContent');
   const bc = document.getElementById('backContent');
@@ -1195,18 +1224,7 @@ function show() {
   if (dir === 'ah') { fc.innerHTML = arSide;      bc.innerHTML = hebrewHTML(c); }
   else              { fc.innerHTML = hebrewHTML(c); bc.innerHTML = arSide; }
 
-  requestAnimationFrame(function () {
-    ['cardInner', 'cardWrap'].forEach(function (id) {
-      document.getElementById(id).style.minHeight = '';
-    });
-    document.querySelectorAll('.card-face').forEach(function (f) { f.style.minHeight = ''; });
-    const h = Math.max(
-      document.getElementById('cardFront').scrollHeight,
-      document.getElementById('cardBack').scrollHeight, 340) + 'px';
-    document.getElementById('cardInner').style.minHeight = h;
-    document.getElementById('cardWrap').style.minHeight = h;
-    document.querySelectorAll('.card-face').forEach(function (f) { f.style.minHeight = h; });
-  });
+  requestAnimationFrame(syncCardHeight);
 
   document.getElementById('counter').textContent = (idx + 1) + ' / ' + deck.length;
   document.getElementById('progressFill').style.width =
@@ -1400,7 +1418,10 @@ function rebuild() {
       const hay = [c.ar, c.arM, c.arF, c.arabic, c.arabicM, c.arabicF,
                    c.arabicSpeak, c.arabicMSpeak, c.arabicFSpeak, c.he, c.note]
         .filter(Boolean).join(' ').toLowerCase();
-      if (hay.indexOf(q) === -1) return false;
+      /* Search ignores niqqud/tashkeel on both sides, so "ענדי" finds
+         "עִנְדִי" and "عندي" finds "عِنْدِي" — typing the marks should never
+         be required to find a word. */
+      if (stripDiacritics(hay).indexOf(stripDiacritics(q)) === -1) return false;
     }
     return true;
   });
@@ -1700,6 +1721,13 @@ function bootFallback(msg) {
 
   sizeTipBorder();
   bootFallback('');
+  /* The Arabic web font loads with display=swap, so the very first card
+     can be measured/sized against the fallback serif before the real font
+     swaps in — re-measure once it's actually active so nothing overflows
+     the card that was sized too early. */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { requestAnimationFrame(syncCardHeight); });
+  }
   if (!SHEET_CSV_URL) return;
   document.getElementById('status').textContent = 'מסנכרן מגוגל שיטס…';
   fetch(SHEET_CSV_URL + (SHEET_CSV_URL.indexOf('?') > -1 ? '&' : '?') + 'cb=' + Date.now())
