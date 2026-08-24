@@ -48,6 +48,27 @@ exports.handler = async function (event) {
   const text = String(body.text || '').trim();
   const voice = ALLOWED_VOICES.has(body.voice) ? body.voice : DEFAULT_VOICE;
 
+  // Optional IPA pronunciation. Arabic script cannot represent the spoken
+  // Levantine vowels ē/ō (the reason the teachers invented their own marks),
+  // so respelling the Arabic can only ever approximate them. IPA sidesteps
+  // orthography entirely and states the sounds outright.
+  // Whether Azure honours <phoneme> for Arabic voices is exactly what the
+  // deploy of this change is meant to determine -- if it doesn't, the plain
+  // text path below is unchanged and nothing regresses.
+  const ipa = String(body.ipa || '').trim();
+  if (ipa && ipa.length > MAX_TEXT_LENGTH) {
+    return { statusCode: 400, body: 'IPA too long' };
+  }
+
+  // Optional speaking rate. Separate lever from `ipa`: the teacher's
+  // "ignored the long vowel" complaint (كَسْلَان) is a DELIVERY fault, not a
+  // spelling one -- the length is already written correctly and the engine
+  // just doesn't hold it. Slowing delivery is the only control available for
+  // that without recording a human. Whitelisted, since this value goes
+  // straight into SSML.
+  const ALLOWED_RATES = new Set(['x-slow', 'slow', 'medium', 'fast', 'x-fast']);
+  const rate = ALLOWED_RATES.has(body.rate) ? body.rate : '';
+
   if (!text) return { statusCode: 400, body: 'Missing text' };
   if (text.length > MAX_TEXT_LENGTH) return { statusCode: 400, body: 'Text too long' };
 
@@ -86,9 +107,19 @@ exports.handler = async function (event) {
   // to "ar-JO" regardless of voice) can make Azure apply the wrong
   // region's text-normalization/prosody rules on top of the right voice.
   const locale = voice.split('-').slice(0, 2).join('-');
+  // With IPA present, wrap the text in <phoneme> so Azure speaks the stated
+  // sounds instead of its own reading of the Arabic spelling. The text stays
+  // inside the element as the written form, so if Azure ignores <phoneme> the
+  // result is simply today's behaviour rather than silence.
+  let spoken = ipa
+    ? '<phoneme alphabet="ipa" ph="' + escapeXml(ipa) + '">' + escapeXml(text) + '</phoneme>'
+    : escapeXml(text);
+  if (rate) {
+    spoken = '<prosody rate="' + rate + '">' + spoken + '</prosody>';
+  }
   const ssml =
-    '<speak version="1.0" xml:lang="' + locale + '">' +
-    '<voice name="' + voice + '">' + escapeXml(text) + '</voice>' +
+    '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="' + locale + '">' +
+    '<voice name="' + voice + '">' + spoken + '</voice>' +
     '</speak>';
 
   let azureRes;
