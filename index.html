@@ -1458,13 +1458,10 @@ function rowsToCards(rows) {
        are marked as such in the UI so a learner always knows which they're
        hearing. Gender pairs share one clip (the sheet records one per row).
 
-       Value is "<lesson>/<row>", e.g. "L21/408" -> L21/408.m4a, served from
-       the repo ROOT. Clips are foldered by lesson rather than dumped flat:
-       519 files in one folder is unmanageable to upload, review or re-cut,
-       and a lesson is the unit everything else here is organised by.
-       They sit at the root rather than under audio/ because GitHub's web
-       uploader drops dragged folders at the root -- matching that is more
-       robust than relying on the path field being filled in correctly. */
+       Value is "<lesson>/<row>", e.g. "L21/408" -> audio/L21/408.m4a.
+       Clips are foldered by lesson rather than dumped flat: 519 files in one
+       folder is unmanageable to upload, review or re-cut, and a lesson is the
+       unit everything else here is organised by. */
     const arAudio = g('אודיו');
     /* `סוג_זוג` says what an X/Y row actually contrasts. The app used to call
        every slashed row masculine/feminine, which is wrong for singular/plural
@@ -1519,7 +1516,7 @@ async function speakText(text, ipa, audioId) {
      leaving the card silent. */
   if (audioId) {
     try {
-      const a = new Audio(audioId + '.m4a');
+      const a = new Audio('audio/' + audioId + '.m4a');
       currentAudio = a;
       await a.play();
       return;
