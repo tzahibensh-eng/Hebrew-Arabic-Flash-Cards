@@ -1,0 +1,55 @@
+# This repo is the DEPLOYED SITE ONLY. Netlify publishes whatever is here, and
+# the repo is public — so anything committed is public.
+#
+# The working project lives separately at ~/flash-cards-dinshi/ and holds the
+# source material and build tooling. None of that belongs here: it is either
+# large (the lesson recordings are 15MB, the course PDFs 11MB), not the site's
+# to serve (the teacher's original course material), or simply noise.
+#
+# Only four things should ever be in this repo:
+#   index.html       the built page
+#   audio/           the word clips the cards play
+#   netlify.toml     build config (secret-scanner settings — do not delete)
+#   netlify/         the Speech proxy function
+
+# ── the teacher's source material — large, and his, not the site's ──────
+lesson-recordings/
+lesson-pdfs/
+*.pdf
+
+# ── build tooling and working data (lives in ~/flash-cards-dinshi/app) ──
+app/
+build_flashcards.py
+pronunciation/
+*.py
+*.csv
+audio-manifest.json
+
+# ── local preview scaffolding — must never reach production ────────────
+preview.html
+preview-data.csv
+
+# ── project docs / backups that aren't part of the site ────────────────
+claude-skill/
+claude-memory/
+pending-import/
+archive/
+firebase/
+git/
+to-deploy/
+upload-batches/
+
+# ── OS / editor noise ──────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# ── credentials: nothing of the sort should ever be committed ──────────
+.env
+.env.*
+*.key
+*.pem
+netlify/functions/.env
