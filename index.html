@@ -367,17 +367,7 @@ header {
 }
 
 /* gender pair */
-.gender-pair { width: 100%; display: flex; flex-direction: column; gap: 4px; }
-.gender-row  { display: flex; align-items: center; gap: 12px; padding: 8px 2px; }
-.gender-label {
-  font-size: .62rem; font-weight: 600; letter-spacing: .04em;
-  color: var(--muted); min-width: 40px; text-align: center; flex-shrink: 0;
-  padding: 3px 0; border-radius: 6px; background: var(--bg-soft);
-}
-.word-block { flex: 1; text-align: center; min-width: 0; }
-.word-block .transliteration { font-size: clamp(1.35rem, 5.4vw, 1.95rem); }
-.word-block .arabic-script  { font-size: clamp(.95rem, 3.6vw, 1.25rem); line-height: 1.85; }
-.gender-divider { height: 1px; background: var(--border); margin: 2px 8px; }
+/* (pair-split styles removed — a row is shown as one line, as in the PDF) */
 .sound-btn-sm {
   width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
   border: 1px solid var(--border); background: var(--surface-2);
@@ -800,7 +790,7 @@ header {
 יִנְעַאד עַלֵיכּם בִּ(א)לְחֵ'יר וִּ(א)לְבַּרַכָּה,שתחזרו לשנה טובה ומבורכת,يِنْعاد عٖكُم بِالْخٖر والْبَرَكَة,לא,,שיעור 7,הברכות חלק ב',يِنْعاد عَلَيْكُم بِالْخَيْر والْبَرَكَة,,jinʕaːd ʕeːkum biilxeːr wilbaraki,L7/45,
 עַלֵינא וְעַלֵיכ יַא רַבּ/עַלֵינא וְעַלֵיכִי יַא רַבּ,עלינו ועלייך אלוהים,عٖنا وَعٖك يا رَبّ/عٖنا وَعٖكِي يا رَبّ,לא,,שיעור 7,הברכות חלק ב',عَلَيْنا وَعَلَيْك يا رَبّ/عَلَيْنا وَعَلَيْكِي يا رَبّ,,ʕeːnaː waʕeːk jaː rabb/ʕeːnaː waʕeːkiː jaː rabb,L7/46,מין
 יִסְלַמוּ אִידֵיכ/אִידֵיכִי,יבורכו ידייך,يِسْلَمُوا إيدٖك/إيدٖكِي,לא,,שיעור 7,הברכות חלק ב',يِسْلَمُوا إيدَيك/إيدَيكِي,,jislamuːaː ʔiːdeːk/ʔiːdeːkiː,L7/47,מין
-וְאִידֵיכ/וְאִידֵיכִי,וידייך,وإيدٖك/وإيدٖكِي,לא,,שיעור 7,הברכות חלק ב',وإيدَيك/وإيدَيكِي,,wʔiːdeːk/wʔiːdeːkiː,,מין
+וְאִידֵיכ/וְאִידֵיכִי,וידייך,وإيدٖك/وإيدٖكِي,לא,,שיעור 7,הברכות חלק ב',وإيدَيك/وإيدَيكِي,,wʔiːdeːk/wʔiːdeːkiː,L7/48,מין
 סַחָּה,לבריאות,صَحَّة,כן,,שיעור 7,הברכות חלק ב',,,sˤaħħa,L7/49,
 סַחְתֵין,"בריאות (תשובה, פעמיים)",صَحْتٖن,כן,מילה נרדפת: עַלַא קַלְבַּכ,שיעור 7,הברכות חלק ב',صَحْتين,,sˤaħteːn,L7/50,
 עַלַא קַלְבַּכ,על הלב שלך (תשובה),عَلَى قَلْبَك,לא,מילה נרדפת: סַחְתֵין,שיעור 7,הברכות חלק ב',,,ʕalaː qalbak,L7/51,
@@ -1017,7 +1007,7 @@ header {
 יַא אִבְּנִי,בני,يَا ابْنِي,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,jaː aːbniː,L16/262,
 אִשְׁתַאק/יִשְׁתַאק,התגעגע,اِشْتَاق/يِشْتَاق,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,iʃtaːq/jiʃtaːq,L16/263,זמן
 אִשְׁתַקְתִלַּכּ,התגעגעתי אליך,اِشْتَقْتِلَّك,לא,לבדוק מול המורה - צורת הפועל המדויקת,שיעור 16,השיר ביתי אחלה ביתי,,,iʃtaqtillak,L16/264,
-אַח'/אִחְ'וֵה,אח,أَخ/إِخْوِة,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,ʔax/ʔixwi,L16/265,מספר
+אַח'/אִחְ'וֵה,אח,أَخ/إِخْوِة,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,ʔax/ʔixwi,,מספר
 אִחְ'וַאנִי,אחיי,إِخْوَانِي,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,ʔixwaːniː,L16/266,
 אִבְּתַסַם/יִבְּתַסֵם,חייך,اِبْتَسَم/يِبْتَسِم,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,ibtasam/jibtasim,L16/267,זמן
 כֻּלְנַא מְנִתְעַאוַן,כולנו עוזרים,كُلْنَا مْنِتْعَاوَن,לא,,שיעור 16,השיר ביתי אחלה ביתי,,,kulnaː mnitʕaːwan,L16/268,
@@ -1111,7 +1101,7 @@ header {
 תַזַלֻּג',גלישה / החלקה,تَزَلُّج,לא,,שיעור 19,התחביבים שלי,,,tazalludʒ,L19/356,
 כִּתַאבֶּה,כתיבה,كِتَابَة,לא,,שיעור 19,התחביבים שלי,,,kitaːbi,L19/357,
 חֵ'יר,טוב,خٖر,לא,,שיעור 19,התחביבים שלי,,,xeːr,L19/358,
-סוּק,שוק,سُوق,לא,,שיעור 19,התחביבים שלי,,,suːq,,
+סוּק,שוק,سُوق,לא,,שיעור 19,התחביבים שלי,,,suːq,L19/359,
 קַעַד/יֻקְעֹד,ישב,قَعَد/يُقْعُد,לא,,שיעור 20,סיטואציות עם בני משפחה,,,qaʕad/juqʕud,L20/360,זמן
 קֻדַּאם,מול,قُدَّام,לא,,שיעור 20,סיטואציות עם בני משפחה,,,quddaːm,L20/361,
 חַדַּר/יְחַדַּר,צפה,حَضَّر/يْحَضِّر,לא,,שיעור 20,סיטואציות עם בני משפחה,,,ħadˤdˤar/jħadˤdˤir,L20/362,זמן
@@ -1238,7 +1228,7 @@ header {
 חַדַּּאד,נפח,حَدَّاد,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,ħaddaːd,L27/483,
 חַיַּּאט,חייט,خَيَّاط,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,xajaːtˤ,L27/484,
 חַ'בַּּאז,אופה,خَبَّاز,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,xabbaːz,L27/485,
-סַוַּּאק,נהג,سَوَّاق,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,sawaːq,,
+סַוַּּאק,נהג,سَوَّاق,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,sawaːq,L27/486,
 בַּנַּּאא,בנאי,بَنَّاء,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,bannaːʔ,L27/487,
 כַּסְלַאן,עצלן,كَسْلَان,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,kaslaːn,L27/488,
 חַלַּּאק,ספר,حَلَّاق,לא,,שיעור 27,השיר לדודי יש שבעה ילדים והמספר הסודר,,,ħallaːq,,
@@ -1463,12 +1453,6 @@ function rowsToCards(rows) {
        folder is unmanageable to upload, review or re-cut, and a lesson is the
        unit everything else here is organised by. */
     const arAudio = g('אודיו');
-    /* `סוג_זוג` says what an X/Y row actually contrasts. The app used to call
-       every slashed row masculine/feminine, which is wrong for singular/plural
-       (عِيد/أَعْيَاد), past/present (اِشْتَاق/يِشْتَاق) and plain synonyms
-       (عَيَّان/مَرِيض) -- it taught incorrect grammar on ~78 of 126 cards.
-       Empty falls back to gender, i.e. the old behaviour. */
-    const pairKind = g('סוג_זוג') || 'מין';
     /* Length of the phrase being learned (the Arabic side, via its
        transliteration) — not the Hebrew gloss: עִנְדִי is one word to learn
        even though "יש לי" is two. Gender pairs count one form only.
@@ -1479,21 +1463,17 @@ function rowsToCards(rows) {
     const override = parseInt(g('מילים'), 10);
     const words = override > 0 ? override
                 : phraseWordCount(isPair ? tr.split('/')[0] : tr);
-    if (isPair) {
-      const t = tr.split('/'), a = ar.split('/');
-      const aSpeak = (arSpeak.split('/').length - 1) === 1 ? arSpeak.split('/') : a;
-      const aIPA = (arIPA.split('/').length - 1) === 1 ? arIPA.split('/') : ['', ''];
-      out.push({ id: id, isGenderPair: true, pairKind: pairKind, arM: t[0].trim(), arF: t[1].trim(),
-                 arabicM: a[0].trim(), arabicF: a[1].trim(),
-                 arabicMSpeak: (aSpeak[0] || a[0]).trim(), arabicFSpeak: (aSpeak[1] || a[1]).trim(),
-                 arabicMIPA: (aIPA[0] || '').trim(), arabicFIPA: (aIPA[1] || '').trim(),
-                 audio: arAudio,
-                 he: he, note: note, said: said, lesson: lesson, topic: topic, words: words });
-    } else {
-      out.push({ id: id, isGenderPair: false, ar: tr, arabic: ar,
-                 arabicSpeak: arSpeak || ar, arabicIPA: arIPA, audio: arAudio,
-                 he: he, note: note, said: said, lesson: lesson, topic: topic, words: words });
-    }
+    /* A row is presented EXACTLY as the course PDF writes it -- one line,
+       slash and all. It used to be split into two labelled rows (זכר/נקבה),
+       which meant the app was asserting a grammatical contrast the source
+       never states, and got it wrong on 78 of 126 such rows: عِيد/أَعْيَاد is
+       singular/plural, اِشْتَاق/يِشْتَاق past/present, عَيَّان/مَرِيض simply two
+       words for one thing. The PDF makes no such claim, so neither should we.
+       Teacher's instruction, 2026-08-30. Audio likewise plays the whole entry
+       as one continuous recording -- he reads both forms in one breath. */
+    out.push({ id: id, isGenderPair: false, ar: tr, arabic: ar,
+               arabicSpeak: arSpeak || ar, arabicIPA: arIPA, audio: arAudio,
+               he: he, note: note, said: said, lesson: lesson, topic: topic, words: words });
   }
   return out;
 }
@@ -1571,39 +1551,6 @@ function voiceBadge(c) {
     : '<span class="voice-tag voice-tts" title="הגייה ממוחשבת — לא הוקלט">ממוחשב</span>';
 }
 
-const PAIR_LABELS = {
-  'מין':    ['זכר', 'נקבה'],
-  'מספר':   ['יחיד', 'רבים'],
-  'זמן':    ['עבר', 'הווה'],
-  'נרדפות': ['', ''],        /* alternatives, not a grammatical contrast */
-};
-
-function genderHTML(c) {
-  const lbl = PAIR_LABELS[c.pairKind] || PAIR_LABELS['מין'];
-  function rowHTML(label, tr, ab, speakKey, ipaKey) {
-    return '<div class="gender-row">' +
-      '<span class="gender-label">' + label + '</span>' +
-      '<div class="word-block">' +
-        '<div class="transliteration">' + esc(tr) + '</div>' +
-        '<div class="arabic-script">' + esc(ab) + '</div>' +
-      '</div>' +
-      '<button class="sound-btn-sm" aria-label="השמעה" ' +
-        'onclick="event.stopPropagation();speakText(deck[idx].' + speakKey +
-        ', deck[idx].' + ipaKey + ', deck[idx].audio)">' + speakerIcon(c) + '</button>' +
-    '</div>';
-  }
-  return '<div class="gender-pair">' +
-    rowHTML(lbl[0], c.arM, c.arabicM, 'arabicMSpeak', 'arabicMIPA') +
-    '<div class="gender-divider"></div>' +
-    rowHTML(lbl[1], c.arF, c.arabicF, 'arabicFSpeak', 'arabicFIPA') +
-    /* the badge belongs on pair cards too -- it was only on single-word cards,
-       so half the deck gave the learner no idea which voice they were hearing.
-       One badge for the card: the sheet stores one recording per row, shared
-       by both forms. */
-    voiceBadge(c) +
-  '</div>';
-}
-
 function arabicHTML(c) {
   return '<div class="transliteration">' + esc(c.ar) + '</div>' +
          '<div class="arabic-script">' + esc(c.arabic) + '</div>' +
@@ -1666,7 +1613,7 @@ function show() {
   kg.classList.toggle('on', lvl === 'good');
   kg.querySelector('.chk').textContent = lvl === 'good' ? '🎉' : '✓';
 
-  const arSide = c.isGenderPair ? genderHTML(c) : arabicHTML(c);
+  const arSide = arabicHTML(c);
   if (dir === 'ah') { fc.innerHTML = arSide;      bc.innerHTML = hebrewHTML(c); }
   else              { fc.innerHTML = hebrewHTML(c); bc.innerHTML = arSide; }
 
@@ -1862,7 +1809,7 @@ function rebuild() {
     if (wordsFilter === '3plus' && c.words < 3)   return false;
     if (q) {
       const hay = [c.ar, c.arM, c.arF, c.arabic, c.arabicM, c.arabicF,
-                   c.arabicSpeak, c.arabicMSpeak, c.arabicFSpeak, c.he, c.note]
+                   c.arabicSpeak, c.he, c.note]
         .filter(Boolean).join(' ').toLowerCase();
       /* Search ignores niqqud/tashkeel on both sides, so "ענדי" finds
          "עִנְדִי" and "عندي" finds "عِنْدِي" — typing the marks should never
@@ -1888,8 +1835,8 @@ function rebuild() {
 
 /* ── games ────────────────────────────────── */
 /* Gender-pair cards use the masculine form as their single prompt. */
-function promptMain(c) { return c.isGenderPair ? c.arM : c.ar; }
-function promptSub(c)  { return c.isGenderPair ? c.arabicM : c.arabic; }
+function promptMain(c) { return c.ar; }
+function promptSub(c)  { return c.arabic; }
 
 /* Games follow the same direction toggle as the flashcards. */
 function qText(c) { return dir === 'ah' ? promptMain(c) : c.he; }
